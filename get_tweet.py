@@ -109,7 +109,8 @@ while(True):
                 # 結果をmongoDBに格納する
                 meta.insert({"metadata":res['metadata'], "insert_date": now_unix_time()})
                 for s in res['statuses']:
-                    tweetdata.insert(s)
+                    if s['text'].startswith('RT') == False  # RTではない場合にmongoDBに格納
+                        tweetdata.insert(s)
                 next_url = res['metadata']['next_results']
                 pattern = r".*max_id=([0-9]*)\&.*"
                 ite = re.finditer(pattern, next_url)
