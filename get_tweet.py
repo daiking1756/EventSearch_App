@@ -7,13 +7,13 @@ from pymongo import MongoClient
 from collections import defaultdict
 import numpy as np
 sys.path.append('../')
-from keys import twitter_key as tk
+from keys import twitter_keys as tk
 
 KEYS = { # 自分のアカウントで入手したキーを下記に記載
-        'consumer_key':tk.consumer_key,
-        'consumer_secret':tk.consumer_secret,
-        'access_token':tk.access_token,
-        'access_secret':tk.access_secret,
+        'consumer_key':tk.consumer_key[0],
+        'consumer_secret':tk.consumer_secret[0],
+        'access_token':tk.access_token[0],
+        'access_secret':tk.access_secret[0],
        }
 
 twitter = None
@@ -21,6 +21,7 @@ connect = None
 db      = None
 tweetdata = None
 meta    = None
+
 
 def initialize(): # twitter接続情報や、mongoDBへの接続処理等initial処理実行
     global twitter, twitter, connect, db, tweetdata, meta
@@ -33,6 +34,7 @@ def initialize(): # twitter接続情報や、mongoDBへの接続処理等initial
     meta = db.metadata
 
 initialize()
+
 
 # 検索ワードを指定して100件のTweetデータをTwitter REST APIsから取得する
 def getTweetData(search_word, max_id, since_id):
@@ -62,10 +64,12 @@ def getTweetData(search_word, max_id, since_id):
         print ("Error: %d" % req.status_code)
         return{"result":False, "status_code":req.status_code}
 
+
 # 文字列を日本時間2タイムゾーンを合わせた日付型で返す
 def str_to_date_jp(str_date):
     dts = datetime.datetime.strptime(str_date,'%a %b %d %H:%M:%S +0000 %Y')
     return pytz.utc.localize(dts).astimezone(pytz.timezone('Asia/Tokyo'))
+
 
 # 現在時刻をUNIX Timeで返す
 def now_unix_time():
@@ -109,7 +113,7 @@ while(True):
                 # 結果をmongoDBに格納する
                 meta.insert({"metadata":res['metadata'], "insert_date": now_unix_time()})
                 for s in res['statuses']:
-                    if s['text'].startswith('RT') == False  # RTではない場合にmongoDBに格納
+                    if s['text'].startswith('RT') == False and s['text'].startswith('@') == False:  # RT・リプライではない場合にmongoDBに格納 
                         tweetdata.insert(s)
                 next_url = res['metadata']['next_results']
                 pattern = r".*max_id=([0-9]*)\&.*"
@@ -141,4 +145,3 @@ while(True):
         raise
     finally:
         info = sys.exc_info()
-
