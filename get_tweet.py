@@ -26,7 +26,7 @@ meta    = None
 def initialize(): # twitter接続情報や、mongoDBへの接続処理等initial処理実行
     global twitter, twitter, connect, db, tweetdata, meta
     twitter = OAuth1Session(KEYS['consumer_key'],KEYS['consumer_secret'],
-                            KEYS['access_token'],KEYS['access_secret'])
+                            KEYS['arccess_token'],KEYS['access_secret'])
 #   connect = Connection('localhost', 27017)     # Connection classは廃止されたのでMongoClientに変更 
     connect = MongoClient('localhost', 27017)
     db = connect.event
