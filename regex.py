@@ -20,7 +20,7 @@ def initialize(): # twitter接続情報や、mongoDBへの接続処理等initial
     global connect, db, tweetdata, meta
 #   connect = Connection('localhost', 27017)     # Connection classは廃止されたのでMongoClientに変更 
     connect = MongoClient('localhost', 27017)
-    db = connect.event
+    db = connect.eventtweet
     tweetdata = db.tweetdata
     meta = db.metadata
 

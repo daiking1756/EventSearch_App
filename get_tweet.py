@@ -20,8 +20,8 @@ twitter = None
 connect = None
 db      = None
 tweetdata = None
-meta    = None
-
+# meta    = None
+collectiondata = None
 
 def initialize(): # twitter接続情報や、mongoDBへの接続処理等initial処理実行
     global twitter, twitter, connect, db, tweetdata, meta
@@ -29,9 +29,12 @@ def initialize(): # twitter接続情報や、mongoDBへの接続処理等initial
                             KEYS['access_token'],KEYS['access_secret'])
 #   connect = Connection('localhost', 27017)     # Connection classは廃止されたのでMongoClientに変更 
     connect = MongoClient('localhost', 27017)
-    db = connect.event
+    db = connect.eventtweet
+    
     tweetdata = db.tweetdata
-    meta = db.metadata
+    # meta = db.metadata
+    collectiondata = db.collectiondata
+
 
 initialize()
 
@@ -80,12 +83,18 @@ sid=-1
 mid = -1 
 count = 0
 
+search_word = sys.argv[1] + ' イベント'
+
+# search_word = sys.argv[1] + ' イベント' + ' OR ' + sys.argv[1] + ' フェア' + ' OR ' + sys.argv[1] + ' 祭'
+
+print("search_word :" + search_word) 
+
 res = None
 while(True):    
     try:
         count = count + 1
         sys.stdout.write("%d, "% count)
-        res = getTweetData(u'広島 イベント', max_id=mid, since_id=sid)
+        res = getTweetData(search_word, max_id=mid, since_id=sid)
         if res['result']==False:
             # 失敗したら終了する
             print ("status_code", res['status_code'])
@@ -111,9 +120,10 @@ while(True):
                 sys.stdout.write("statuses is none. ")
             elif 'next_results' in res['metadata']:
                 # 結果をmongoDBに格納する
-                meta.insert({"metadata":res['metadata'], "insert_date": now_unix_time()})
+                # meta.insert({"metadata":res['metadata'], "insert_date": now_unix_time()})
                 for s in res['statuses']:
                     if s['text'].startswith('RT') == False and s['text'].startswith('@') == False:  # RT・リプライではない場合にmongoDBに格納 
+                        s['search_word'] = sys.argv[1]
                         tweetdata.insert(s)
                 next_url = res['metadata']['next_results']
                 pattern = r".*max_id=([0-9]*)\&.*"
