@@ -9,6 +9,8 @@ import numpy as np
 sys.path.append('../')
 from keys import twitter_keys as tk
 
+from tqdm import tqdm
+
 KEYS = { # 自分のアカウントで入手したキーを下記に記載
         'consumer_key':tk.consumer_key[0],
         'consumer_secret':tk.consumer_secret[0],
@@ -115,6 +117,6 @@ else:
     timeline_id = res['timeline_id']
     print(timeline_id)
 
-for d in tweetdata.find({"date_pattern":True, "search_word":sys.argv[1]},{'id_str':1, '_id':0}).limit(100):
+for d in tqdm(tweetdata.find({"date_pattern":True, "search_word":sys.argv[1]},{'id_str':1, '_id':0}).limit(30)):
     res = addTweet(timeline_id, d['id_str'])
     #print("add!!")
