@@ -13,7 +13,7 @@
     
     $collection_id = split('-', $outpara[0]);
 
-    $collection_url = "https://twitter.com/arayutw/timelines/" . $collection_id[1];
+    $collection_url = "https://twitter.com/cs_hiroshima_u/timelines/" . $collection_id[1];
 
     echo($collection_url);
 ?>

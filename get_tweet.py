@@ -1,7 +1,7 @@
 # coding: utf-8
 from requests_oauthlib import OAuth1Session
 from requests.exceptions import ConnectionError, ReadTimeout, SSLError
-import json, datetime, time, pytz, re, sys,traceback, pymongo
+import json, datetime, time, pytz, re, sys, traceback, pymongo
 #from pymongo import Connection     # Connection classは廃止されたのでMongoClientに変更 
 from pymongo import MongoClient
 from collections import defaultdict
@@ -83,16 +83,17 @@ sid=-1
 mid = -1 
 count = 0
 
-search_word = sys.argv[1] + ' イベント'
+#search_word = sys.argv[1] + ' イベント'
 
-# search_word = sys.argv[1] + ' イベント' + ' OR ' + sys.argv[1] + ' フェア' + ' OR ' + sys.argv[1] + ' 祭'
+search_word = sys.argv[1] + ' イベント' + ' OR ' + sys.argv[1] + ' フェア' + ' OR ' + sys.argv[1] + ' 祭'
 
 print("search_word :" + search_word) 
 
 res = None
-while(True):    
+count = 1
+request_num = 5
+while(count <= request_num):    
     try:
-        count = count + 1
         sys.stdout.write("%d, "% count)
         res = getTweetData(search_word, max_id=mid, since_id=sid)
         if res['result']==False:
@@ -134,21 +135,21 @@ while(True):
             else:
                 sys.stdout.write("next is none. finished.")
                 break
-                """
-    except SSLError as (errno, request):
-        print ("SSLError({0}): {1}".format(errno, strerror))
-        print ("waiting 5mins")
-        time.sleep(5*60)
+        count = count + 1
+    # except SSLError as (errno, request):
+    #     print ("SSLError({0}): {1}".format(errno, strerror))
+    #     print ("waiting 5mins")
+    #     time.sleep(5*60)
 
-    except ConnectionError as (errno, request):
-        print ("ConnectionError({0}): {1}".format(errno, strerror))
-        print ("waiting 5mins")
-        time.sleep(5*60)
-    except ReadTimeout as (errno, request):
-        print ("ReadTimeout({0}): {1}".format(errno, strerror))
-        print ("waiting 5mins")
-        time.sleep(5*60)
-        """
+    # except ConnectionError as (errno, request):
+    #     print ("ConnectionError({0}): {1}".format(errno, strerror))
+    #     print ("waiting 5mins")
+    #     time.sleep(5*60)
+    # except ReadTimeout as (errno, request):
+    #     print ("ReadTimeout({0}): {1}".format(errno, strerror))
+    #     print ("waiting 5mins")
+    #     time.sleep(5*60)
+    
     except:
         print ("Unexpected error:", sys.exc_info()[0])
         traceback.format_exc(sys.exc_info()[2])
