@@ -29,7 +29,6 @@ def initialize(): # twitter接続情報や、mongoDBへの接続処理等initial
     global twitter, twitter, connect, db, tweetdata, meta, collectiondata
     twitter = OAuth1Session(KEYS['consumer_key'],KEYS['consumer_secret'],
                             KEYS['access_token'],KEYS['access_secret'])
-#   connect = Connection('localhost', 27017)     # Connection classは廃止されたのでMongoClientに変更 
     connect = MongoClient('localhost', 27017)
     db = connect.eventtweet
     
@@ -86,6 +85,24 @@ def addTweet(timeline_id, tweet_id):
         print ("Error: %d" % req.status_code)
         return{"result":False, "status_code":req.status_code, "reason":response['response']['errors']}
 
+# def curateTweet(timeline_id, tweet_id):
+#     global twitter
+
+#     url = 'https://api.twitter.com/1.1/collections/entries/add.json'
+#     params = {
+#         'id':timeline_id,
+#         'tweet_id':tweet_id
+#     }
+
+#     req = twitter.post(url, params = params)   # CollectionにTweetを追加
+
+#     if req.status_code == 200: # 成功した場合
+#         return{"result":True}
+#     else:
+#         response = json.loads(req.text)
+#         print ("Error: %d" % req.status_code)
+#         return{"result":False, "status_code":req.status_code, "reason":response['response']['errors']}
+
 # CollectionのTweetListを取得する関数
 def getCollectionTweetList(timeline_id, count):
     global twitter
@@ -117,6 +134,6 @@ else:
     timeline_id = res['timeline_id']
     print(timeline_id)
 
-for d in tqdm(tweetdata.find({"date_pattern":True, "search_word":sys.argv[1]},{'id_str':1, '_id':0}).limit(30)):
+for d in tqdm(tweetdata.find({"event_date":{"$ne":"null"}, "search_word":sys.argv[1]},{'id_str':1, '_id':0}).limit(30)):
     res = addTweet(timeline_id, d['id_str'])
     #print("add!!")

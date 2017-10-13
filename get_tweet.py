@@ -91,7 +91,7 @@ print("search_word :" + search_word)
 
 res = None
 count = 1
-request_num = 5
+request_num = 10
 while(count <= request_num):    
     try:
         sys.stdout.write("%d, "% count)
