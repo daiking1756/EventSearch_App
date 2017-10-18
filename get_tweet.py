@@ -8,6 +8,7 @@ from collections import defaultdict
 import numpy as np
 sys.path.append('../')
 from keys import twitter_keys as tk
+import time
 
 KEYS = { # 自分のアカウントで入手したキーを下記に記載
         'consumer_key':tk.consumer_key[0],
@@ -27,7 +28,6 @@ def initialize(): # twitter接続情報や、mongoDBへの接続処理等initial
     global twitter, twitter, connect, db, tweetdata, meta
     twitter = OAuth1Session(KEYS['consumer_key'],KEYS['consumer_secret'],
                             KEYS['access_token'],KEYS['access_secret'])
-#   connect = Connection('localhost', 27017)     # Connection classは廃止されたのでMongoClientに変更 
     connect = MongoClient('localhost', 27017)
     db = connect.eventtweet
     
@@ -78,20 +78,27 @@ def str_to_date_jp(str_date):
 def now_unix_time():
     return time.mktime(datetime.datetime.now().timetuple())
 
+start = time.time()
+
 #-------------繰り返しTweetデータを取得する-------------#
-sid=-1
+# search_word = sys.argv[1] + ' イベント'
+search_word = sys.argv[1] + ' イベント' + ' OR ' + sys.argv[1] + ' フェア' + ' OR ' + sys.argv[1] + ' 祭'
+print("search_word :" + search_word) 
+
+d = list(tweetdata.find({'search_word':sys.argv[1]},{'_id':0, 'id_str':1}).sort([['id_str',-1]]).limit(1))
+try:
+    # print(d[0]['id_str'])
+    sid = d[0]['id_str']  # 前の続きを検索
+except IndexError:
+    sid = -1
+
 mid = -1 
 count = 0
 
-#search_word = sys.argv[1] + ' イベント'
-
-search_word = sys.argv[1] + ' イベント' + ' OR ' + sys.argv[1] + ' フェア' + ' OR ' + sys.argv[1] + ' 祭'
-
-print("search_word :" + search_word) 
-
 res = None
 count = 1
-request_num = 10
+request_num = 10 # リクエスト回数 (0.9[s/request]) 
+
 while(count <= request_num):    
     try:
         sys.stdout.write("%d, "% count)
@@ -156,3 +163,6 @@ while(count <= request_num):
         raise
     finally:
         info = sys.exc_info()
+
+elapsed_time = time.time() - start
+print("\nelapsed_time:{0}".format(elapsed_time) + "[sec]")

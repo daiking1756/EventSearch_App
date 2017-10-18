@@ -32,49 +32,52 @@ def search_all(s, created_at, re_list):
     for r in re_list:
         result = r.search(s)
         if result:
-            pattern_num = re_list.index(r)
-            if pattern_num >= 0:    # 投稿日時を用いる場合
-                tdatetime = datetime.datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y')
-                tdatetime += datetime.timedelta(hours=9) # 日本時間に変換するために+9時間する
-                tdate = datetime.date(tdatetime.year, tdatetime.month, tdatetime.day)
+            try:
+                pattern_num = re_list.index(r)
+                if pattern_num >= 0:    # 投稿日時を用いる場合
+                    tdatetime = datetime.datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y')
+                    tdatetime += datetime.timedelta(hours=9) # 日本時間に変換するために+9時間する
+                    tdate = datetime.date(tdatetime.year, tdatetime.month, tdatetime.day)
 
-            if pattern_num == 0 or pattern_num == 1: # 2017/7/29 まで
-                y, m, d = result.groups()
-                 
-                tdatetime = tdatetime.replace(year=int(moji.zen_to_han(y)))
-                tdatetime = tdatetime.replace(month=int(moji.zen_to_han(m)))
-                tdatetime = tdatetime.replace(day=int(moji.zen_to_han(d)))
-                
-            elif pattern_num == 2 or pattern_num == 3: # 7/29 まで
-                m, d = result.groups()
-                tdatetime = tdatetime.replace(month=int(moji.zen_to_han(m)))
-                tdatetime = tdatetime.replace(day=int(moji.zen_to_han(d)))
-                # tdate = datetime.date(tdate.year, m, d)
+                if pattern_num == 0 or pattern_num == 1: # 2017/7/29 まで
+                    y, m, d = result.groups()
+                     
+                    tdatetime = tdatetime.replace(year=int(moji.zen_to_han(y)))
+                    tdatetime = tdatetime.replace(month=int(moji.zen_to_han(m)))
+                    tdatetime = tdatetime.replace(day=int(moji.zen_to_han(d)))
+                    
+                elif pattern_num == 2 or pattern_num == 3: # 7/29 まで
+                    m, d = result.groups()
+                    tdatetime = tdatetime.replace(month=int(moji.zen_to_han(m)))
+                    tdatetime = tdatetime.replace(day=int(moji.zen_to_han(d)))
+                    # tdate = datetime.date(tdate.year, m, d)
 
-            elif pattern_num == 4:  # 29日
-                d = result.group(0).replace('日','')
-                d = int(moji.zen_to_han(d))
-                try:
-                    tdatetime = tdatetime.replace(day=d)
-                except ValueError:
-                    return False, 'null', 4
-                
-            elif pattern_num == 5:  # 5日後
-                d_plus = result.group(0).replace('日後','')
-                d_plus = int(moji.zen_to_han(d_plus))
-                tdatetime += datetime.timedelta(days=d_plus)
-                
-            # elif pattern_num == 6:  # 本日
-                # 投稿日時がそのままイベントとなるため、特に処理は無し
+                elif pattern_num == 4:  # 29日
+                    d = result.group(0).replace('日','')
+                    d = int(moji.zen_to_han(d))
+                    try:
+                        tdatetime = tdatetime.replace(day=d)
+                    except ValueError:
+                        return False, 'null', 4
+                    
+                elif pattern_num == 5:  # 5日後
+                    d_plus = result.group(0).replace('日後','')
+                    d_plus = int(moji.zen_to_han(d_plus))
+                    tdatetime += datetime.timedelta(days=d_plus)
+                    
+                # elif pattern_num == 6:  # 本日
+                    # 投稿日時がそのままイベントとなるため、特に処理は無し
 
-            elif pattern_num == 7:  # 明日
-                tdatetime += datetime.timedelta(days=1)
-                
-            elif pattern_num == 8:  # 明後日
-                tdatetime += datetime.timedelta(days=2)
-                
-            elif pattern_num == 9:  # 明々後日
-                tdatetime += datetime.timedelta(days=3)     
+                elif pattern_num == 7:  # 明日
+                    tdatetime += datetime.timedelta(days=1)
+                    
+                elif pattern_num == 8:  # 明後日
+                    tdatetime += datetime.timedelta(days=2)
+                    
+                elif pattern_num == 9:  # 明々後日
+                    tdatetime += datetime.timedelta(days=3)     
+            except ValueError:
+                print("ValueError!!!!!")    
             
             print(tdatetime)
             return True, tdatetime, pattern_num
@@ -101,10 +104,10 @@ date_pattern_list = [
 ]
 
 
-for d in tweetdata.find({},{'_id':1, 'id':1, 'text':1, 'created_at':1}):
+for d in tweetdata.find({},{'_id':1, 'text':1, 'created_at':1}):
     result, tdatetime, pattern_num = search_all(d['text'], d['created_at'], date_pattern_list)
-    #if result:
-    tweetdata.update({'_id' : d['_id']},{'$set': {'event_date':tdatetime, 'pattern_num':pattern_num}})    
+    if result:
+        tweetdata.update({'_id' : d['_id']},{'$set': {'event_date':tdatetime, 'pattern_num':pattern_num}})    
     #else:
      #   tweetdata.update({'_id' : d['_id']},{'$set': {'date_pattern':'null'}})
 

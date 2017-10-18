@@ -8,8 +8,8 @@
 
     exec($get_tweet_path);
     exec($regex_path);
-    exec($collection_path);
-    exec($col_name2id_path, $outpara);
+    exec($collection_path, $outpara);
+    // exec($col_name2id_path, $outpara);
     
     $collection_id = split('-', $outpara[0]);
 
