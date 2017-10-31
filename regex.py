@@ -36,8 +36,9 @@ def search_all(s, created_at, re_list):
                 pattern_num = re_list.index(r)
                 if pattern_num >= 0:    # 投稿日時を用いる場合
                     tdatetime = datetime.datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y')
-                    tdatetime += datetime.timedelta(hours=9) # 日本時間に変換するために+9時間する
-                    tdate = datetime.date(tdatetime.year, tdatetime.month, tdatetime.day)
+                    # tdatetime += datetime.timedelta(hours=9) # 日本時間に変換するために+9時間する
+                    tdatetime -= datetime.timedelta(hours=7) # 日本時間に変換するために-7時間する ← ?? なぜか正しい
+                    # tdate = datetime.date(tdatetime.year, tdatetime.month, tdatetime.day)
 
                 if pattern_num == 0 or pattern_num == 1: # 2017/7/29 まで
                     y, m, d = result.groups()

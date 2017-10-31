@@ -1,20 +1,19 @@
 <?php
     $get_tweet_path = 'python3.6 ./get_tweet.py ' . htmlspecialchars($_GET['message']);
     $regex_path = 'python3.6 ./regex.py';
-    $collection_path = 'python3.6 ./collection.py ' . htmlspecialchars($_GET['message']);
-    $col_name2id_path =
-      'python3.6 ./col_name2id.py ' . htmlspecialchars($_GET['message']);
+    $collection_path = 'python3.6 ./collection.py ' . htmlspecialchars($_GET['message']) . ' ' . htmlspecialchars($_GET['since_date']) . ' ' . htmlspecialchars($_GET['until_date']) . ' ' . htmlspecialchars($_GET['sort_by']) . ' ' . htmlspecialchars($_GET['sort_order']);
     
-
     exec($get_tweet_path);
     exec($regex_path);
     exec($collection_path, $outpara);
-    // exec($col_name2id_path, $outpara);
     
     $collection_id = split('-', $outpara[0]);
-
+    // echo($outpara[0]);
+    echo($collection_path);
+    echo(date('Y/m/d'));
     $collection_url = "https://twitter.com/cs_hiroshima_u/timelines/" . $collection_id[1];
 
+    // echo($collection_id[1]);
     echo($collection_url);
 ?>
 

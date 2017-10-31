@@ -75,6 +75,29 @@ def create(collection_name):
         return{"result":False, "status_code":req.status_code}
 
 
+# Collectionを削除する関数
+def destroy(timeline_id):
+    global twitter
+    
+    url = 'https://api.twitter.com/1.1/collections/destroy.json'
+    params = {
+        'id':timeline_id,
+        
+    }
+
+    req = twitter.post(url, params = params)   # CollectionにTweetを追加
+
+    if req.status_code == 200: # 成功した場合
+        # print("destroy!")
+        collectiondata.remove({"collection_name":sys.argv[1]})
+        return{"result":True}
+    else:
+        response = json.loads(req.text)
+        print(response)
+        print ("Error: %d" % req.status_code)
+        return{"result":False, "status_code":req.status_code}
+
+
 # CollectionにTweetを追加する関数
 def addTweet(timeline_id, tweet_id):
     global twitter
@@ -95,24 +118,23 @@ def addTweet(timeline_id, tweet_id):
         print ("Error: %d" % req.status_code)
         return{"result":False, "status_code":req.status_code, "reason":response['response']['errors']}
 
+
 def curateTweet(timeline_id, op_list):
     global twitter
 
     # op_list = json.dumps(op_list)
+    # params = str(params)
+    # params = params.replace('\'','\"')
+    # params = params.replace(' ','')
+
+    # params = json.dumps(params)
+    # params = urllib.parse.quote(params)
 
     url = 'https://api.twitter.com/1.1/collections/entries/curate.json'
     params = {
         "id":timeline_id,
         "changes":op_list
     }
-
-    params = str(params)
-    params = params.replace('\'','\"')
-    params = params.replace(' ','')
-
-    # params = json.dumps(params)
-    params = urllib.parse.quote(params)
-
     print(params)
 
     req = twitter.post(url, params = params)   # CollectionにTweetを追加
@@ -126,27 +148,26 @@ def curateTweet(timeline_id, op_list):
         return{"result":False, "status_code":req.status_code}
 
 
-# # CollectionのTweetListを取得する関数
-# def getCollectionTweetList(timeline_id, count):
-#     global twitter
+def createDatetime(date):
+    date_list = date.split('-')
+    y = int(date_list[0])
+    m = int(date_list[1])
+    d = int(date_list[2])
 
-#     url = 'https://api.twitter.com/1.1/collections/entries.json'
-#     params = {
-#         'id':timeline_id,
-#         'count':count
-#     }
+    time = datetime.datetime(y, m, d)
 
-#     req = twitter.get(url, params = params)   # CollectionのTweetを取得
-
-#     if req.status_code == 200: # 成功した場合
-#         return{"result":True}
-#     else:
-#         response = json.loads(req.text)
-#         print ("Error: %d" % req.status_code)
-#         return{"result":False, "status_code":req.status_code, "reason":response['response']['errors']}
+    return time
 
 
 res = None
+
+# 既にcollectionが存在すれば，一旦削除する処理
+d = list(collectiondata.find({'collection_name':sys.argv[1]}))
+try:
+    # print(type(d[0]['collection_id']))
+    destroy(d[0]['collection_id'])
+except IndexError:
+    pass;
 
 res = create(sys.argv[1])  #Collectionの作成
         
@@ -156,18 +177,34 @@ else:
     timeline_id = res['timeline_id']
     # print(timeline_id)
 
-now = datetime.datetime.now() #+ datetime.timedelta(hours=9)
+# now = datetime.datetime.now() #+ datetime.timedelta(hours=9)
+since_date = createDatetime(sys.argv[2])
+until_date = createDatetime(sys.argv[3])
+until_date += datetime.timedelta(days=1) # 次の日の00:00より前とすれば良い
 
-for d in tqdm(tweetdata.find({'event_date':{'$gt':now}, 'collection':{'$exists':False}, 'search_word':sys.argv[1]},{'id_str':1, '_id':1, 'event_date':1, 'text':1}).sort([['event_date',-1]]).limit(30)):
-    tweetdata.update({'_id' : d['_id']},{'$set': {'collection':True}}) 
-    res = addTweet(timeline_id, d['id_str'])
-    
+# for d in tqdm(tweetdata.find({'event_date':{'$gt':now}, 'collection':{'$exists':False}, 'search_word':sys.argv[1]},{'id_str':1, '_id':1, 'event_date':1, 'text':1}).sort([['event_date',-1]]).limit(30)):
+
+if sys.argv[4]=='date': # 日付順
+    for d in tqdm(tweetdata.find({'event_date':{'$gt':since_date, '$lt':until_date}, 'search_word':sys.argv[1]},{'id_str':1, '_id':1, 'event_date':1, 'text':1}).sort([['event_date',int(sys.argv[5])]]).limit(30)):
+
+        # tweetdata.update({'_id' : d['_id']},{'$set': {'collection':True}}) # collectionに追加されたツイートにはTrueでセット
+        res = addTweet(timeline_id, d['id_str'])   
+
+else: # イイね順
+    for d in tqdm(tweetdata.find({'event_date':{'$gt':since_date, '$lt':until_date}, 'search_word':sys.argv[1]},{'id_str':1, '_id':1, 'event_date':1, 'text':1}).sort([['favorite_count',int(sys.argv[5])]]).limit(30)):
+
+        # tweetdata.update({'_id' : d['_id']},{'$set': {'collection':True}}) # collectionに追加されたツイートにはTrueでセット
+        res = addTweet(timeline_id, d['id_str'])
+
+##################################### curate Tweet API ####################################
 # op_list = []
 
-# for d in tweetdata.find({"event_date":{"$ne":"null"}, "search_word":sys.argv[1]},{'id_str':1, '_id':0}).limit(5):
+# for d in tqdm(tweetdata.find({'event_date':{'$gt':now}, 'collection':{'$exists':False}, 'search_word':sys.argv[1]},{'id_str':1, '_id':1, 'event_date':1, 'text':1}).sort([['event_date',-1]]).limit(5)):
 #     op_list.append({'op':'add', 'tweet_id':d['id_str']})
 
 # res = curateTweet(timeline_id, op_list)
+
+###########################################################################################
 
 if res['result']==False:
     sys.exit()
