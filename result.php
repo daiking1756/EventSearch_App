@@ -9,12 +9,12 @@
     
     $collection_id = split('-', $outpara[0]);
     // echo($outpara[0]);
-    echo($collection_path);
-    echo(date('Y/m/d'));
+    // echo($collection_path);
+    // echo(date('Y/m/d'));
     $collection_url = "https://twitter.com/cs_hiroshima_u/timelines/" . $collection_id[1];
 
     // echo($collection_id[1]);
-    echo($collection_url);
+    // echo($collection_url);
 ?>
 
 <!DOCTYPE html>

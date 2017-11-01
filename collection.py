@@ -85,7 +85,7 @@ def destroy(timeline_id):
         
     }
 
-    req = twitter.post(url, params = params)   # CollectionにTweetを追加
+    req = twitter.post(url, params = params)   # Collectionを削除
 
     if req.status_code == 200: # 成功した場合
         # print("destroy!")
