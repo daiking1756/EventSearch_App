@@ -26,7 +26,7 @@
 
 <p>コレクションは<a href="<?php echo $collection_url;?>" target="_blank">こちら</a>です。</p>
 
-<h2>タイムライン形式</h2>
+<!-- <h2>タイムライン形式</h2> -->
 <!-- コンテナ -->
 <div id="tweet-collection-timeline"></div>
 
@@ -44,7 +44,7 @@ twttr.widgets.createTimeline (
     },
     document.getElementById( "tweet-collection-timeline" ) ,    // 第2引数: コンテナの要素
     {   // 第3引数: パラメータ
-      width: 300 ,    // 横幅
+      width: 500 ,    // 横幅
     }
 ) ;
 </script>

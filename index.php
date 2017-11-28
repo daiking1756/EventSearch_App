@@ -13,41 +13,56 @@
         .container {
             max-width: 730px;
         }
+        .collection {
+            width: 400px;
+            height: 900px;
+        }
+        div.block_left {
+           float: left;
+           width: 40%;
+           margin-left: 30px;
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-    <h1>Event Tweet Search</h1>
-        <form action="result.php" method="get">
-            <div class="form-group">
-                <label>地名：</label>
-                <input type="text" name="message" placeholder="例：渋谷" required>
+    <div class="block_left">
+        <h1>Event Tweet Search</h1>
+            <div class="container">
+                <form action="result.php" method="get" enctype="multipart/form-data" target="iframe">
+                    <div class="form-group">
+                        <label>地名：</label>
+                        <input type="text" name="message" placeholder="例：渋谷" required>
+                    </div>
+                    <div class="form-group">
+                        <label>日付：</label>
+                        <input type="date" name="since_date" value="<?php echo(date('Y-m-d'));?>" required> ~
+                        <input type="date" name="until_date" value="<?php echo(date('Y-m-d', strtotime("+ 1 months")));?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>並び替え：</label>
+                        <select name="sort_by">
+                            <option value="date" selected>日付順</option>
+                            <option value="favorite">お気に入り順</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>順序：</label>
+                        <select name="sort_order">
+                            <option value="1" selected>降順</option>
+                            <option value="-1">昇順</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>キーワード：</label>
+                        <input type="text" name="keyword" placeholder="例：ライブ"><br>    
+                    </div>
+                    <input type="submit" value="検索" class="btn btn-primary">
+                </form>
             </div>
-            <div class="form-group">
-                <label>日付：</label>
-                <input type="date" name="since_date" value="<?php echo(date('Y-m-d'));?>" required> ~
-                <input type="date" name="until_date" value="<?php echo(date('Y-m-d', strtotime("+ 1 months")));?>" required>
-            </div>
-            <div class="form-group">
-                <label>並び替え：</label>
-                <select name="sort_by">
-                    <option value="date" selected>日付順</option>
-                    <option value="favoriteeeee">お気に入り順</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>順序：</label>
-                <select name="sort_order">
-                    <option value="1" selected>降順</option>
-                    <option value="-1">昇順</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>キーワード：</label>
-                <input type="text" name="keyword" placeholder="例：ライブ"><br>    
-            </div>
-            <input type="submit" value="検索" class="btn btn-primary">
-        </form>
+    </div>
+    <div class="block_right">
+        <iframe class="collection" name="iframe" frameborder="0"></iframe>
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
