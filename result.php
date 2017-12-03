@@ -2,51 +2,87 @@
     $get_tweet_path = 'python3.6 ./get_tweet.py ' . htmlspecialchars($_GET['message']);
     $regex_path = 'python3.6 ./regex.py';
     $collection_path = 'python3.6 ./collection.py ' . htmlspecialchars($_GET['message']) . ' ' . htmlspecialchars($_GET['since_date']) . ' ' . htmlspecialchars($_GET['until_date']) . ' ' . htmlspecialchars($_GET['sort_by']) . ' ' . htmlspecialchars($_GET['sort_order']);
+    $col_name2id_path = 'python3.6 ./col_name2id.py ' . htmlspecialchars($_GET['message']);
     
-    exec($get_tweet_path);
-    exec($regex_path);
-    exec($collection_path, $outpara);
+
+    exec($col_name2id_path, $outpara);
+    // echo('col_name2id.py finish!<br>');
+
+    exec($get_tweet_path . " > /dev/null &");
+    exec($regex_path . " > /dev/null &");
+    exec($collection_path . " > /dev/null &");
     
     $collection_id = split('-', $outpara[0]);
-    // echo($outpara[0]);
+    // echo($outpara[0] . '<br>');
     // echo($collection_path);
     // echo(date('Y/m/d'));
     $collection_url = "https://twitter.com/cs_hiroshima_u/timelines/" . $collection_id[1];
 
     // echo($collection_id[1]);
-    // echo($collection_url);
+    // echo($collection_url . '<br>');
 ?>
 
 <!DOCTYPE html>
 <html>
     <head>
         <title>test page</title>
+        <script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
+
+        <script type="text/javascript">
+        function show_collection(){
+            // コレクションを埋め込み表示するメソッドを実行 (タイムライン形式)
+            
+            // var element = document.getElementById("tweet-collection-timeline");
+            // element.parentNode.removeChild(element);
+            
+            // var new_timeline = document.createElement('div');
+            // new_timeline.setAttribute('id','tweet-collection-timeline');
+
+            // var parent = document.getElementById('container');
+            // parent.appendChild(new_timeline);
+
+            var collection_id = "<?php echo $collection_id[1];?>";
+
+            var tl = twttr.widgets.createTimeline (
+                {   // 第1引数: ウィジェットの種類
+                    sourceType: "collection",
+                    id: collection_id,   // コレクションID
+                },
+                document.getElementById("container") ,    // 第2引数: コンテナの要素
+                //new_timeline,
+                {   // 第3引数: パラメータ
+                  width: 500 ,    // 横幅
+                }
+            ) ;
+        }
+        function get_iframe_contents(){
+            var tl = document.getElementById("twitter-widget-0").contentWindow.document;
+            
+            // 文字列処理によって、不要なツイート部分の<li>を取り除く(splitを用いるとできそう)
+
+            // console.log(tl.innerHTML);
+            // console.log(tl.innerText);
+            // console.log(tl.textContent);
+            console.log(tl.body.innerHTML);
+            // alert(typeof tl.body.innerHTML)
+            // tl.body.innerHTML = "<p>hogehoge</p><br>"
+        }
+
+        // setInterval(show_collection, 2000);
+        </script>
     </head>
-<body>
+    
+    <body>
+        <input type="button" value="更新" onClick="show_collection();">
+        <input type="button" value="iframe内容取得" onClick="get_iframe_contents();">
+        <p>コレクションは<a href="<?php echo $collection_url;?>" target="_blank">こちら</a>です。</p>
 
-<p>コレクションは<a href="<?php echo $collection_url;?>" target="_blank">こちら</a>です。</p>
-
-<!-- <h2>タイムライン形式</h2> -->
-<!-- コンテナ -->
-<div id="tweet-collection-timeline"></div>
-
-<!-- ライブラリの読み込み -->
-<script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
-
-<script>
-// コレクションを埋め込み表示するメソッドを実行 (タイムライン形式)
-var $collection_id = "<?php echo $collection_id[1];?>";
-
-twttr.widgets.createTimeline (
-    {   // 第1引数: ウィジェットの種類
-        sourceType: "collection",
-        id: $collection_id,   // コレクションID
-    },
-    document.getElementById( "tweet-collection-timeline" ) ,    // 第2引数: コンテナの要素
-    {   // 第3引数: パラメータ
-      width: 500 ,    // 横幅
-    }
-) ;
-</script>
-</body>
+        <!-- <h2>タイムライン形式</h2> -->
+        <!-- コンテナ -->
+        <div id="container">
+            <div id="tweet-collection-timeline">    
+            </div>
+        </div>
+        <!-- <script type="text/javascript">show_collection();</script> -->
+    </body>
 </html>

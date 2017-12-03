@@ -161,13 +161,13 @@ def createDatetime(date):
 
 res = None
 
-# 既にcollectionが存在すれば，一旦削除する処理
-d = list(collectiondata.find({'collection_name':sys.argv[1]}))
-try:
-    # print(type(d[0]['collection_id']))
-    destroy(d[0]['collection_id'])
-except IndexError:
-    pass;
+# # 既にcollectionが存在すれば，一旦削除する処理
+# d = list(collectiondata.find({'collection_name':sys.argv[1]}))
+# try:
+#     # print(type(d[0]['collection_id']))
+#     destroy(d[0]['collection_id'])
+# except IndexError:
+#     pass;
 
 res = create(sys.argv[1])  #Collectionの作成
         
