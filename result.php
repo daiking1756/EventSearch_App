@@ -32,6 +32,7 @@
         function show_collection(){
             // コレクションを埋め込み表示するメソッドを実行 (タイムライン形式)
             
+            // DOMを削除する処理 
             // var element = document.getElementById("tweet-collection-timeline");
             // element.parentNode.removeChild(element);
             
@@ -55,15 +56,28 @@
                 }
             ) ;
         }
+        var count = 0;
         function get_iframe_contents(){
-            var tl = document.getElementById("twitter-widget-0").contentWindow.document;
-            
+            var tl = document.getElementById("twitter-widget-" + count + "").contentWindow.document;
+            count++;
             // 文字列処理によって、不要なツイート部分の<li>を取り除く(splitを用いるとできそう)
 
+            // splitstr = "I have".split(' ');
+            
+
+            // コレクションの最後のツイート(<li>タグ)の抜き出し
+            splitstr = tl.body.innerHTML.split('<ol')[1];
+            splitstr = splitstr.split('</ol>')[0];
+            // splitstr = splitstr.split('<li class="timeline-TweetList-tweet customisable-border">');
+            // splitstr = '<li class="timeline-TweetList-tweet customisable-border">' + splitstr[splitstr.length-1];
+            
+            
             // console.log(tl.innerHTML);
             // console.log(tl.innerText);
             // console.log(tl.textContent);
-            console.log(tl.body.innerHTML);
+            console.log(typeof splitstr);
+            console.log(splitstr);
+            // console.log(tl.body.innerHTML);
             // alert(typeof tl.body.innerHTML)
             // tl.body.innerHTML = "<p>hogehoge</p><br>"
         }
