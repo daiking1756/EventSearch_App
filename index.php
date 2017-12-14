@@ -43,7 +43,7 @@
                         <label>並び替え：</label>
                         <select name="sort_by">
                             <option value="date" selected>日付順</option>
-                            <option value="favorite">お気に入り順</option>
+                            <option value="favorite">イイね順</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -62,7 +62,7 @@
             </div>
     </div>
     <div class="block_right">
-        <iframe class="collection" name="iframe" frameborder="0"></iframe>
+        <iframe class="collection" name="iframe" frameborder="1"></iframe>
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
