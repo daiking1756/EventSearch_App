@@ -97,7 +97,7 @@ count = 0
 
 res = None
 count = 1
-request_num = 10 # リクエスト回数 (0.9[s/request]) 
+request_num = int(sys.argv[2]) # リクエスト回数 (0.9[s/request]) 
 
 while(count <= request_num):    
     try:

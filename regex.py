@@ -104,18 +104,31 @@ date_pattern_list = [
     re.compile('明々後日')      # [9]
 ]
 
-# def main(diff):
-#     for d in tweetdata.find({},{'_id':1, 'text':1, 'created_at':1}).limit(diff):
-#         result, tdatetime, pattern_num = search_all(d['text'], d['created_at'], date_pattern_list)
-#         if result:
-#             tweetdata.update({'_id' : d['_id']},{'$set': {'event_date':tdatetime, 'pattern_num':pattern_num}})
-#         #else:
-#          #   tweetdata.update({'_id' : d['_id']},{'$set': {'date_pattern':'null'}})
-
-for d in tweetdata.find({},{'_id':1, 'text':1, 'created_at':1}):
+for d in tweetdata.find({'event_date':{'$exists':False}},{'_id':1, 'text':1, 'created_at':1}):
     result, tdatetime, pattern_num = search_all(d['text'], d['created_at'], date_pattern_list)
     if result:
         tweetdata.update({'_id' : d['_id']},{'$set': {'event_date':tdatetime, 'pattern_num':pattern_num}})
+    else:
+        tweetdata.update({'_id' : d['_id']},{'$set': {'event_date':False, 'pattern_num':False}})
     #else:
      #   tweetdata.update({'_id' : d['_id']},{'$set': {'date_pattern':'null'}})
+
+
+# def main(diff):
+#     # print("diff :" + str(diff))
+#     for d in tweetdata.find({'event_date':{'$exists':False}},{'_id':1, 'text':1, 'created_at':1}).limit(diff):
+#         result, tdatetime, pattern_num = search_all(d['text'], d['created_at'], date_pattern_list)
+#         if result:
+#             tweetdata.update({'_id' : d['_id']},{'$set': {'event_date':tdatetime, 'pattern_num':pattern_num}})
+#         else:
+#             tweetdata.update({'_id' : d['_id']},{'$set': {'event_date':False, 'pattern_num':False}})
+#         #else:
+#          #   tweetdata.update({'_id' : d['_id']},{'$set': {'date_pattern':'null'}})
+
+# for d in tweetdata.find({},{'_id':1, 'text':1, 'created_at':1}):
+#     result, tdatetime, pattern_num = search_all(d['text'], d['created_at'], date_pattern_list)
+#     if result:
+#         tweetdata.update({'_id' : d['_id']},{'$set': {'event_date':tdatetime, 'pattern_num':pattern_num}})
+#     #else:
+#      #   tweetdata.update({'_id' : d['_id']},{'$set': {'date_pattern':'null'}})
 

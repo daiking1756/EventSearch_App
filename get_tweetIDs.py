@@ -14,6 +14,7 @@ import urllib.parse
 import datetime
 from pytz import timezone
 
+
 KEYS = { # 自分のアカウントで入手したキーを下記に記載
         'consumer_key':tk.consumer_key[0],
         'consumer_secret':tk.consumer_secret[0],
@@ -52,33 +53,22 @@ def createDatetime(date):
     return time
 
 # def main(search_word, sd, ud, sort_by, sort_order, diff):
-#     # since_date = createDatetime(sys.argv[2])
-#     # until_date = createDatetime(sys.argv[3])
-#     # until_date += datetime.timedelta(days=1) # 次の日の00:00より前とすれば良い
+#     f = open('tweetID.txt', 'a') # 書き込み(追記)モードで開く
 
 #     since_date = createDatetime(sd)
 #     until_date = createDatetime(ud)
 #     until_date += datetime.timedelta(days=1) # 次の日の00:00より前とすれば良い
 
-#     # tweetList_datesort = []
-#     # tweetList_favosort = []
-#     tweetList = []
+#     # tweetList = []
 
-#     for d in tqdm(tweetdata.find({'event_date':{'$gt':since_date, '$lt':until_date}, 'search_word':search_word},{'id_str':1, '_id':1, 'event_date':1, 'text':1}).sort([['event_date',int(sort_order)*(-1)]]).limit(diff)):
-#         # print(d['id_str']);
-#         tweetList_datesort.append(d['id_str'])
+#     for d in tqdm(tweetdata.find({'event_date':{'$gt':since_date, '$lt':until_date}, 'search_word':search_word,'already_shown':{'$exists':False}},{'id_str':1, '_id':1, 'event_date':1, 'text':1}).limit(diff)):
+#         # tweetList.append(d['id_str'])
+#         tweetdata.update({'_id' : d['_id']},{'$set': {'already_shown':True}})
+#         # print(d['id_str'])
+#         f.write(d['id_str']+',')
 
-#     for d in tqdm(tweetdata.find({'event_date':{'$gt':since_date, '$lt':until_date}, 'search_word':search_word},{'id_str':1, '_id':1, 'event_date':1, 'text':1}).sort([['favorite_count',int(sort_order)*(-1)]]).limit(diff)):
-#         # print(d['id_str']);
-#         tweetList_favosort.append(d['id_str'])
-
-#     # for d in tqdm(tweetdata.find({'event_date':{'$gt':since_date, '$lt':until_date}, 'search_word':search_word},{'id_str':1, '_id':1, 'event_date':1, 'text':1}).limit(diff)):
-#     #     # tweetList.append(d['id_str'])
-#     #     print(d['id_str'])
-
-#     print(tweetList_datesort)
-#     print(tweetList_favosort)
 #     # print(tweetList)
+#     f.close() # ファイルを閉じる
 
 since_date = createDatetime(sys.argv[2])
 until_date = createDatetime(sys.argv[3])
