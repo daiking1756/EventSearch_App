@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>入力ページ(Socket.io)</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <style>
+        @media (min-width: 768px)
+        .container {
+            max-width: 730px;
+        }
+        .collection {
+            width: 400px;
+            height: 900px;
+        }
+        div#block_left {
+           float: left;
+           width: 40%;
+           margin-left: 30px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="block_left">
+        <h1>Event Tweet Search</h1>
+            <div class="container">
+                <form id = "myForm" action="/app.js" method="get" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>地名：</label>
+                        <input type="text" id="message" name="message" placeholder="例：渋谷" required>
+                    </div>
+                    <div class="form-group">
+                        <label>日付：</label>
+                        <input type="date" id="since_date" name="since_date" value="<?php echo(date('Y-m-d'));?>" required> ~
+                        <input type="date" id="until_date" name="until_date" value="<?php echo(date('Y-m-d', strtotime("+ 1 months")));?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>並び替え：</label>
+                        <select id="sort_by" name="sort_by">
+                            <option value="date" selected>日付順</option>
+                            <option value="favorite">イイね順</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>順序：</label>
+                        <select id="sort_order" name="sort_order">
+                            <option value="1" selected>降順</option>
+                            <option value="-1">昇順</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>キーワード：</label>
+                        <input type="text" id="keyword" name="keyword" placeholder="例：ライブ"><br>    
+                    </div>
+                    <input type="submit" value="検索" class="btn btn-primary">
+                </form>
+            </div>
+    </div>
+    <div id="block_right">
+        <!-- Embedded Single Tweet -->
+        <!-- Embedded Single Tweet -->
+        <!-- Embedded Single Tweet -->
+        <!-- ..................... -->
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+    var container = document.getElementById( "block_right" ) ;
+
+    // ツイートを埋め込み表示するメソッドを実行
+    
+    $(function(){
+        var socket = io.connect();
+        $('#myForm').submit(function(e){
+            e.preventDefault();
+
+            // データの成形
+            var data = [];
+            data.push($('#message').val());
+            data.push($('#since_date').val());
+            data.push($('#until_date').val());
+            data.push($('#sort_by').val());
+            data.push($('#sort_order').val());
+            data.push($('#keyword').val());
+            console.log(data);
+
+            socket.emit('emit_from_client', data);
+            console.log('emit_from_client!!!!!!!');
+            
+        });
+        socket.on('emit_from_server_tweetID', function(data){
+            console.log('emit_from_server!!!!!!!');
+            // $('#logs').append($('<li>').text('<blockquote class="twitter-tweet" data-conversation="none"><a href="https://twitter.com/twitterapi/status/' + data + '"></a></blockquote>'));
+            // var addHTML = '<blockquote class="twitter-tweet" data-conversation="none"><a href="https://twitter.com/twitterapi/status/' + data + '"></a></blockquote>';
+            // console.log($('#block_right').html())
+            // $('#block_right').html($('#block_right').html() + addHTML);
+
+            twttr.widgets.createTweet (
+                data ,  // 第1引数: ツイートID
+                container , // 第2引数: コンテナの要素
+                {   // 第3引数: パラメータ
+                    conversation: "none" ,
+                    theme: "dark",
+                    // linkColor: "#D36015" ,
+                    width: 300 ,
+                    align: "center" ,
+                    lang: "ja" ,
+                    dnt: true ,
+                }
+            ) ;
+
+
+        });
+    })
+
+
+
+    </script>
+</body>
+</html>

@@ -9,6 +9,8 @@ import numpy as np
 sys.path.append('../')
 from keys import twitter_keys as tk
 import time
+import regex
+
 
 KEYS = { # 自分のアカウントで入手したキーを下記に記載
         'consumer_key':tk.consumer_key[0],
@@ -133,6 +135,7 @@ while(count <= request_num):
                     if s['text'].startswith('RT') == False and s['text'].startswith('@') == False:  # RT・リプライではない場合にmongoDBに格納 
                         s['search_word'] = sys.argv[1]
                         tweetdata.insert(s)
+                        regex.main(s['_id'], s['text'], s['created_at']);
                 next_url = res['metadata']['next_results']
                 pattern = r".*max_id=([0-9]*)\&.*"
                 ite = re.finditer(pattern, next_url)
