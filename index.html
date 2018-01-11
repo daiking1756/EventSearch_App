@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>入力ページ(Socket.io)</title>
+    <title>入力ページ</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <style>
         @media (min-width: 768px)
@@ -74,8 +74,6 @@
 
     <script>
     var container = document.getElementById( "block_right" ) ;
-
-    // ツイートを埋め込み表示するメソッドを実行
     
     $(function(){
         var socket = io.connect();
@@ -98,11 +96,8 @@
         });
         socket.on('emit_from_server_tweetID', function(data){
             console.log('emit_from_server!!!!!!!');
-            // $('#logs').append($('<li>').text('<blockquote class="twitter-tweet" data-conversation="none"><a href="https://twitter.com/twitterapi/status/' + data + '"></a></blockquote>'));
-            // var addHTML = '<blockquote class="twitter-tweet" data-conversation="none"><a href="https://twitter.com/twitterapi/status/' + data + '"></a></blockquote>';
-            // console.log($('#block_right').html())
-            // $('#block_right').html($('#block_right').html() + addHTML);
 
+            // ツイートを埋め込み表示するメソッドを実行
             twttr.widgets.createTweet (
                 data ,  // 第1引数: ツイートID
                 container , // 第2引数: コンテナの要素
@@ -120,9 +115,6 @@
 
         });
     })
-
-
-
     </script>
 </body>
 </html>
