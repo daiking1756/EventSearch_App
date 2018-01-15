@@ -42,8 +42,8 @@
                     <div class="form-group">
                         <label>並び替え：</label>
                         <select id="sort_by" name="sort_by">
-                            <option value="date" selected>日付順</option>
-                            <option value="favorite">イイね順</option>
+                          <option value="event_date" selected>日付順</option>
+                            <option value="favorite_count">イイね順</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -62,6 +62,20 @@
             </div>
     </div>
     <div id="block_right">
+        <div id="button_area">
+            <p>
+                <label>並び替え：</label>
+                <input id="sort_by_date" type="button" value="日付順　" class="btn btn-primary" disabled>
+                <input id="sort_by_favo" type="button" value="イイね順" class="btn btn-primary" disabled>
+            </p>
+
+            <p>
+                <label>　順序　：</label>
+                <input id="sort_order_upto" type="button" value="昇順　　" class="btn btn-primary" disabled>
+                <input id="sort_order_downto" type="button" value="降順　　" class="btn btn-primary" disabled>
+            </p>
+        </div>
+        <div id="tweet_area"></div>
         <!-- Embedded Single Tweet -->
         <!-- Embedded Single Tweet -->
         <!-- Embedded Single Tweet -->
@@ -73,11 +87,18 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
-    var container = document.getElementById( "block_right" ) ;
+    var container = document.getElementById( "tweet_area" ) ;
     
     $(function(){
         var socket = io.connect();
         $('#myForm').submit(function(e){
+            $("#sort_by_date").prop("disabled", true);
+            $("#sort_by_favo").prop("disabled", true);
+            $("#sort_order_upto").prop("disabled", true);
+            $("#sort_order_downto").prop("disabled", true);
+
+            $("#tweet_area").html("");  // tweet_areaを空にする
+
             e.preventDefault();
 
             // データの成形
@@ -90,7 +111,7 @@
             data.push($('#keyword').val());
             console.log(data);
 
-            socket.emit('emit_from_client', data);
+            socket.emit('emit_from_client_searchStart', data);
             console.log('emit_from_client!!!!!!!');
             
         });
@@ -111,9 +132,52 @@
                     dnt: true ,
                 }
             ) ;
-
-
         });
+
+        socket.on('emit_from_server_searchEnd', function(data){
+            $("#sort_by_date").prop("disabled", false);
+            $("#sort_by_favo").prop("disabled", false);
+            $("#sort_order_upto").prop("disabled", false);
+            $("#sort_order_downto").prop("disabled", false);
+            alert("結果の並び替えが可能になりました。\nボタンをクリックすると、並び替えが行われます。");
+        });
+
+        socket.on('emit_from_server_sorttweetIDs', function(data){
+            data.forEach(function(doc) {
+                twttr.widgets.createTweet (
+                doc ,  // 第1引数: ツイートID
+                container , // 第2引数: コンテナの要素
+                {   // 第3引数: パラメータ
+                    conversation: "none" ,
+                    theme: "dark",
+                    // linkColor: "#D36015" ,
+                    width: 300 ,
+                    align: "center" ,
+                    lang: "ja" ,
+                    dnt: true ,
+                }
+            ) ;
+            });
+        });
+    
+
+        $("#sort_by_date").click(function(){
+            $("#tweet_area").html("");
+            socket.emit('emit_from_client_sortButton', 'sort_by_date');
+        });
+        $("#sort_by_favo").click(function(){
+            $("#tweet_area").html("");
+            socket.emit('emit_from_client_sortButton', 'sort_by_favo');
+        });
+        $("#sort_order_upto").click(function(){
+            $("#tweet_area").html("");
+            socket.emit('emit_from_client_sortButton', 'sort_order_upto');
+        });
+        $("#sort_order_downto").click(function(){
+            $("#tweet_area").html("");
+            socket.emit('emit_from_client_sortButton', 'sort_order_downto');
+        });
+
     })
     </script>
 </body>
