@@ -144,42 +144,45 @@ date_pattern_list = [
 #     if flag_gcpnl==False:
 #         tweetdata.update({'_id' : d['_id']},{'$set': {'event_gcpnl':False}})
 
+# GCP Natural Language API用
+url = "https://language.googleapis.com/v1/documents:analyzeEntities?key=AIzaSyDxH_9HHQ6kstsaeGno5XHdDsLs6SH4J0M" 
+method = "POST"
+header = {"Content-Type" : "application/json"}
+body = {
+            "encodingType":"UTF8",
+            "document":{
+                "type":"PLAIN_TEXT",
+                "language":"ja"
+            }
+    }
+
+
 def main(tweet_id, text, created_at):
     result, tdatetime, pattern_num = search_all(text, created_at, date_pattern_list)
     if result:
         tweetdata.update({'_id' : tweet_id},{'$set': {'event_date':tdatetime, 'pattern_num':pattern_num}})
+
+        ############# ↓ GCP Natural Language Entities analyze ↓ #############
+        body['document']['content'] = text
+        # pprint(body)
+        res = requests.post(url, headers=header, json=body).json()
+        
+        flag_gcpnl = False
+
+        for x in res['entities']:
+            if x['type']=='EVENT':
+                tweetdata.update({'_id' : tweet_id},{'$set': {'event_gcpnl':True}})
+                flag_gcpnl = True
+                break
+
+        if flag_gcpnl==False:
+            tweetdata.update({'_id' : tweet_id},{'$set': {'event_gcpnl':False}})
+
     else:
         tweetdata.update({'_id' : tweet_id},{'$set': {'event_date':False, 'pattern_num':False}})
     #else:
      #   tweetdata.update({'_id' : d['_id']},{'$set': {'date_pattern':'null'}})
-    
-    ############# ↓ GCP Natural Language Entities analyze ↓ #############
 
-    url = "https://language.googleapis.com/v1/documents:analyzeEntities?key=AIzaSyDxH_9HHQ6kstsaeGno5XHdDsLs6SH4J0M" 
-    method = "POST"
-    header = {"Content-Type" : "application/json"}
-    body = {
-                "encodingType":"UTF8",
-                "document":{
-                    "type":"PLAIN_TEXT",
-                    "language":"ja"
-                }
-        }
-
-    body['document']['content'] = text
-    # pprint(body)
-    res = requests.post(url, headers=header, json=body).json()
-    
-    flag_gcpnl = False
-
-    for x in res['entities']:
-        if x['type']=='EVENT':
-            tweetdata.update({'_id' : tweet_id},{'$set': {'event_gcpnl':True}})
-            flag_gcpnl = True
-            break
-
-    if flag_gcpnl==False:
-        tweetdata.update({'_id' : tweet_id},{'$set': {'event_gcpnl':False}})
 
     # print("diff :" + str(diff))
     # for d in tweetdata.find({'event_date':{'$exists':False}},{'_id':1, 'text':1, 'created_at':1})

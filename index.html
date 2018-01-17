@@ -9,18 +9,45 @@
     <title>入力ページ</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <style>
-        @media (min-width: 768px)
-        .container {
-            max-width: 730px;
-        }
-        .collection {
-            width: 400px;
-            height: 900px;
-        }
-        div#block_left {
-           float: left;
-           width: 40%;
-           margin-left: 30px;
+        @media (min-width: 768px){
+            html, body {
+              height: 100%;
+            }
+            #block_left {
+               float: left;
+               width: 40%;
+               margin-left: 30px;
+               background: #00FFFF; 
+            }
+            #block_right {
+               float: left;
+               width: 40%;
+               margin-left: 30px;
+               max-height: 100%;
+               /*overflow: auto;*/
+               background: #FF00FF;
+            }
+            #sort-btn-group{
+                position: fixed;
+                top: 10px;
+                z-index: 999;
+                background: #0000FF;
+            }
+            #tweet_area{
+                position: fixed;
+                margin-top:60px;
+                max-height: 100%;
+                max-width: 100%;
+                overflow: auto;
+                background: #FFFF00;
+            }
+            .gley_btn{
+                /*background: #F9F9F9;*/
+                background: #FF00FF;
+                pointer-events : none;
+            }
+            
+            
         }
 
     </style>
@@ -28,58 +55,67 @@
 <body>
     <div id="block_left">
         <h1>Event Tweet Search</h1>
-            <div class="container">
-                <form id = "myForm" action="/app.js" method="get" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label>地名：</label>
-                        <input type="text" id="message" name="message" placeholder="例：渋谷" required>
-                    </div>
-                    <div class="form-group">
-                        <label>日付：</label>
-                        <input type="date" id="since_date" name="since_date" value="<?php echo(date('Y-m-d'));?>" required> ~
-                        <input type="date" id="until_date" name="until_date" value="<?php echo(date('Y-m-d', strtotime("+ 1 months")));?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label>並び替え：</label>
-                        <select id="sort_by" name="sort_by">
-                          <option value="event_date" selected>日付順</option>
-                            <option value="favorite_count">イイね順</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>順序：</label>
-                        <select id="sort_order" name="sort_order">
-                            <option value="1" selected>降順</option>
-                            <option value="-1">昇順</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>キーワード：</label>
-                        <input type="text" id="keyword" name="keyword" placeholder="例：ライブ"><br>    
-                    </div>
-                    <input type="submit" value="検索" class="btn btn-primary">
-                </form>
-            </div>
+        <div class="container">
+            <form id="myForm" action="/app.js" method="get" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>地名：</label>
+                    <input type="text" id="message" name="message" placeholder="例：渋谷" required>
+                </div>
+                <div class="form-group">
+                    <label>日付：</label>
+                    <input type="date" id="since_date" name="since_date" required> ~
+                    <input type="date" id="until_date" name="until_date" required>
+                </div>
+                <div class="form-group">
+                    <label>並び替え：</label>
+                    <select id="sort_by" name="sort_by">
+                      <option value="event_date" selected>日付順</option>
+                        <option value="favorite_count">イイね順</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>順序：</label>
+                    <select id="sort_order" name="sort_order">
+                        <option value="1" selected>降順</option>
+                        <option value="-1">昇順</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>キーワード：</label>
+                    <input type="text" id="keyword" name="keyword" placeholder="例：ライブ"><br>    
+                </div>
+                <input type="submit" value="検索" class="btn btn-primary">
+            </form>
+        </div>
+
     </div>
     <div id="block_right">
-        <div id="button_area">
-            <p>
-                <label>並び替え：</label>
-                <input id="sort_by_date" type="button" value="日付順　" class="btn btn-primary" disabled>
-                <input id="sort_by_favo" type="button" value="イイね順" class="btn btn-primary" disabled>
-            </p>
+        <div id="sort-btn-group">
+            <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default sort_btn" data-sort="event_date">
+                        <input type="radio" autocomplete="off"> 日付順
+                    </label>
+                    <label class="btn btn-default sort_btn" data-sort="favorite_count">
+                        <input type="radio" autocomplete="off"> イイね順
+                    </label>
+            </div>  
 
-            <p>
-                <label>　順序　：</label>
-                <input id="sort_order_upto" type="button" value="昇順　　" class="btn btn-primary" disabled>
-                <input id="sort_order_downto" type="button" value="降順　　" class="btn btn-primary" disabled>
-            </p>
+            <div class="btn-group" data-toggle="buttons">
+                    <label id="btn1" class="btn btn-default sort_btn" data-sort="-1">
+                        <input type="radio" autocomplete="off"> 昇順
+                    </label>
+                    <label class="btn btn-default sort_btn" data-sort="1">
+                        <input  type="radio" autocomplete="off"> 降順
+                    </label>
+            </div>  
         </div>
-        <div id="tweet_area"></div>
-        <!-- Embedded Single Tweet -->
-        <!-- Embedded Single Tweet -->
-        <!-- Embedded Single Tweet -->
-        <!-- ..................... -->
+        
+        <div id="tweet_area">
+            <!-- Embedded Single Tweet -->
+            <!-- Embedded Single Tweet -->
+            <!-- Embedded Single Tweet -->
+            <!-- ..................... -->
+        </div>
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -87,98 +123,121 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
-    var container = document.getElementById( "tweet_area" ) ;
-    
-    $(function(){
-        var socket = io.connect();
-        $('#myForm').submit(function(e){
-            $("#sort_by_date").prop("disabled", true);
-            $("#sort_by_favo").prop("disabled", true);
-            $("#sort_order_upto").prop("disabled", true);
-            $("#sort_order_downto").prop("disabled", true);
+        //################################## ↓ 初期化処理 ↓ ##################################
+        var now = new Date();
+            year = now.getFullYear(),
+            month = now.getMonth()+1,   // 月が0~11であるため、+1をして換算
+            day = now.getDate();
+        // console.log(now.getFullYear() + '-' + Number(now.getMonth()+1+1+1) + '-' +  now.getDate());
 
-            $("#tweet_area").html("");  // tweet_areaを空にする
+        $('#since_date').attr('value', year + '-' + addzero(month) + '-' +  addzero(day));
+        now.setMonth(now.getMonth()+1+1);   // とりあえず1ヶ月後に設定  
+        $('#until_date').attr('value', year + '-' + addzero(now.getMonth()) + '-' +  addzero(day));
 
-            e.preventDefault();
 
-            // データの成形
-            var data = [];
-            data.push($('#message').val());
-            data.push($('#since_date').val());
-            data.push($('#until_date').val());
-            data.push($('#sort_by').val());
-            data.push($('#sort_order').val());
-            data.push($('#keyword').val());
-            console.log(data);
+        function addzero(num){
+            if(num < 10){
+                return String('0'+num);
+            }else{
+                return String(num);
+            }
+        }
+        
+        // $("#sort-btn-group").toggle();
+        var container = document.getElementById( "tweet_area" ) ;
+        
+        //################################## ↑ 初期化処理 ↑ ##################################
+        
 
-            socket.emit('emit_from_client_searchStart', data);
-            console.log('emit_from_client!!!!!!!');
-            
-        });
-        socket.on('emit_from_server_tweetID', function(data){
-            console.log('emit_from_server!!!!!!!');
+        $(function(){
+            var socket = io.connect();
+            $('#myForm').submit(function(e){
+                $("#sort-btn-group").toggle();
+                console.log($("#btn1").prop("disabled"));
+                $("#btn1").prop("disabled", true);  // 並び替えボタンを無効にする
+                console.log($("#btn1").prop("disabled"));
+                
+                // $("#btn1").prop("disabled", true);
+                // $("#btn2").prop("disabled", true);
+                // $("#btn3").prop("disabled", true);
+                // $("#btn4").prop("disabled", true);
+                
 
-            // ツイートを埋め込み表示するメソッドを実行
-            twttr.widgets.createTweet (
-                data ,  // 第1引数: ツイートID
-                container , // 第2引数: コンテナの要素
-                {   // 第3引数: パラメータ
-                    conversation: "none" ,
-                    theme: "dark",
-                    // linkColor: "#D36015" ,
-                    width: 300 ,
-                    align: "center" ,
-                    lang: "ja" ,
-                    dnt: true ,
-                }
-            ) ;
-        });
+                $("#tweet_area").html("");  // tweet_areaを空にする
 
-        socket.on('emit_from_server_searchEnd', function(data){
-            $("#sort_by_date").prop("disabled", false);
-            $("#sort_by_favo").prop("disabled", false);
-            $("#sort_order_upto").prop("disabled", false);
-            $("#sort_order_downto").prop("disabled", false);
-            alert("結果の並び替えが可能になりました。\nボタンをクリックすると、並び替えが行われます。");
-        });
+                e.preventDefault();
 
-        socket.on('emit_from_server_sorttweetIDs', function(data){
-            data.forEach(function(doc) {
-                twttr.widgets.createTweet (
-                doc ,  // 第1引数: ツイートID
-                container , // 第2引数: コンテナの要素
-                {   // 第3引数: パラメータ
-                    conversation: "none" ,
-                    theme: "dark",
-                    // linkColor: "#D36015" ,
-                    width: 300 ,
-                    align: "center" ,
-                    lang: "ja" ,
-                    dnt: true ,
-                }
-            ) ;
+                // データの成形
+                var data = [];
+                data.push($('#message').val());
+                data.push($('#since_date').val());
+                data.push($('#until_date').val());
+                data.push($('#sort_by').val());
+                data.push($('#sort_order').val());
+                data.push($('#keyword').val());
+                console.log(data);
+
+                socket.emit('emit_from_client_searchStart', data);
+                console.log('emit_from_client!!!!!!!');
+                
             });
-        });
-    
+            socket.on('emit_from_server_tweetID', function(data){
+                console.log('emit_from_server!!!!!!!');
 
-        $("#sort_by_date").click(function(){
-            $("#tweet_area").html("");
-            socket.emit('emit_from_client_sortButton', 'sort_by_date');
-        });
-        $("#sort_by_favo").click(function(){
-            $("#tweet_area").html("");
-            socket.emit('emit_from_client_sortButton', 'sort_by_favo');
-        });
-        $("#sort_order_upto").click(function(){
-            $("#tweet_area").html("");
-            socket.emit('emit_from_client_sortButton', 'sort_order_upto');
-        });
-        $("#sort_order_downto").click(function(){
-            $("#tweet_area").html("");
-            socket.emit('emit_from_client_sortButton', 'sort_order_downto');
-        });
+                // ツイートを埋め込み表示するメソッドを実行
+                twttr.widgets.createTweet (
+                    data ,  // 第1引数: ツイートID
+                    container , // 第2引数: コンテナの要素
+                    {   // 第3引数: パラメータ
+                        conversation: "none" ,
+                        theme: "dark",
+                        // linkColor: "#D36015" ,
+                        width: 300 ,
+                        align: "center" ,
+                        lang: "ja" ,
+                        dnt: true ,
+                    }
+                ) ;
+            });
 
-    })
+            socket.on('emit_from_server_searchEnd', function(data){
+                alert('ツイートの検索終わったよ！！')
+                $("#sort-btn-group").toggle();
+                
+                $(".sort_btn").prop("disabled", false); // 並び替えボタンを有効にする
+                if($("#twitter-widget-0").length){
+                    console.log("twitter-widget-0があるよ。")
+                }else{
+                    socket.emit('emit_from_client_sortButton', null);
+                    console.log("twitter-widget-0がないよ。")
+                }
+            });
+
+            socket.on('emit_from_server_sorttweetIDs', function(data){
+                data.forEach(function(doc) {
+                    twttr.widgets.createTweet (
+                        doc ,  // 第1引数: ツイートID
+                        container , // 第2引数: コンテナの要素
+                        {   // 第3引数: パラメータ
+                            conversation: "none" ,
+                            theme: "dark",
+                            // linkColor: "#D36015" ,
+                            width: 300 ,
+                            align: "center" ,
+                            lang: "ja" ,
+                            dnt: true ,
+                        }
+                    );
+                });
+            });
+        
+            $(".sort_btn").click(function(){
+                $("#tweet_area").html("");  // tweet_areaを空にする
+                console.log("clicked!!");
+                socket.emit('emit_from_client_sortButton', $(this).data('sort'));
+            });
+
+        })
     </script>
 </body>
 </html>
