@@ -12,6 +12,7 @@ import locale
 import re
 import mojimoji as moji
 import requests
+from keys import keys
 from pprint import pprint
 
 connect = None
@@ -145,7 +146,7 @@ date_pattern_list = [
 #         tweetdata.update({'_id' : d['_id']},{'$set': {'event_gcpnl':False}})
 
 # GCP Natural Language API用
-url = "https://language.googleapis.com/v1/documents:analyzeEntities?key=AIzaSyDxH_9HHQ6kstsaeGno5XHdDsLs6SH4J0M" 
+url = "https://language.googleapis.com/v1/documents:analyzeEntities?key=" + keys.gcpnl_API_key
 method = "POST"
 header = {"Content-Type" : "application/json"}
 body = {

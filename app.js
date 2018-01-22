@@ -18,7 +18,7 @@ const   get_tweet = 'python3.6 ./get_tweet.py';
 app.listen(8000);
 console.log("Server running ... at 192.168.33.10:8000")
 
-global.prev_count = 0;
+prev_count = 0;
 
 function handler(req, res){
     fs.readFile(__dirname + '/index.html', 'UTF-8', function (err, data) { 
@@ -40,11 +40,11 @@ function check_mongoDB(data, since_date, until_date){
             console.log('Error!1');
             return;
         }
-        global.count = docs;
-        if(global.count > global.prev_count){ // イベントツイートが追加された場合
+        count = docs;
+        if(count > prev_count){ // イベントツイートが追加された場合
             console.log("insert new tweet!");
-            var diff = global.count - global.prev_count;
-            global.prev_count = global.count;
+            var diff = count - prev_count;
+            prev_count = count;
             get_tweetID(diff, data, since_date, until_date);
             // db_reConnect();
         }
@@ -78,6 +78,7 @@ io.sockets.on('connection', function(socket){
     socket.on('emit_from_client_searchStart', function(data){   // 検索ボタンが押された場合
         console.log(data);
 
+        //########################## ↓ 初期化処理 ↓ ##########################
         sd = data[1].split('-');
         ud = data[2].split('-');
         
@@ -87,6 +88,16 @@ io.sockets.on('connection', function(socket){
         search_word = data[0];
         sort_by = data[3];
         sort_order = Number(data[4]) * (-1);
+        
+        db.tweetdata.count({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true},function(err, docs) {
+            if (err) {
+            console.log('Error!6');
+            return;
+        }
+            prev_count = docs;
+        });
+        //########################## ↑ 初期化処理 ↑ ##########################
+
 
         setInterval(function(){check_mongoDB(data, since_date, until_date)}, 500);    // mongoDBへのツイート追加をチェック
 
@@ -154,12 +165,12 @@ setImmediate(function(){
             console.log('Error!5');
             return;
         }
-        global.prev_count = docs;
+        prev_count = docs;
     });
 });
 
 
 // setInterval(check_mongoDB, 500);    // mongoDBへのツイート追加をチェック
 // setInterval(function(){
-//     console.log(global.prev_count); // デバッグ用
+//     console.log(prev_count); // デバッグ用
 // },500);
