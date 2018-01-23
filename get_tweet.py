@@ -71,23 +71,37 @@ def now_unix_time():
 start = time.time()
 
 #-------------繰り返しTweetデータを取得する-------------#
-# search_word = sys.argv[1] + ' イベント'
-search_word = sys.argv[1] + ' イベント' + ' OR ' + sys.argv[1] + ' フェア' + ' OR ' + sys.argv[1] + ' 告知'
+# search_word = sys.argv[1]
+if sys.argv[3] == "none": # keywordに何も入力されていない場合
+    search_word = sys.argv[1] + ' イベント' + ' OR ' + sys.argv[1] + ' フェア' + ' OR ' + sys.argv[1] + ' 告知'
+    flag_keyword = False
+    d = list(tweetdata.find({'search_word':sys.argv[1]},{'_id':0, 'id_str':1}).sort([['id_str',-1]]).limit(1))
+else:
+    search_word = sys.argv[1] + ' ' + sys.argv[3]
+    flag_keyword = True
+    d = list(tweetdata.find({'search_word':sys.argv[1], 'keyword':sys.argv[3]},{'_id':0, 'id_str':1}).sort([['id_str',-1]]).limit(1))
+
 print("search_word :" + search_word) 
 
-d = list(tweetdata.find({'search_word':sys.argv[1]},{'_id':0, 'id_str':1}).sort([['id_str',-1]]).limit(1))
+# if flag_keyword==False:
+#     d = list(tweetdata.find({'search_word':sys.argv[1]},{'_id':0, 'id_str':1}).sort([['id_str',-1]]).limit(1))
+# else:
+#     d = list(tweetdata.find({'search_word':sys.argv[1], 'keyword':sys.argv[3]},{'_id':0, 'id_str':1}).sort([['id_str',-1]]).limit(1))
+
 try:
     # print(d[0]['id_str'])
     sid = d[0]['id_str']  # 前の続きを検索
 except IndexError:
-    sid = -1
+    sid = -1    # 以前の検索が無ければ、-1
 
 mid = -1 
 count = 0
 
 res = None
 count = 1
-request_num = int(sys.argv[2]) # リクエスト回数 (0.9[s/request]) 
+request_num = int(sys.argv[2]) 
+
+print("sid :" + str(sid))
 
 while(count <= request_num):    
     try:
@@ -122,8 +136,10 @@ while(count <= request_num):
                 for s in res['statuses']:
                     if s['text'].startswith('RT') == False and s['text'].startswith('@') == False:  # RT・リプライではない場合にmongoDBに格納 
                         s['search_word'] = sys.argv[1]
+                        if flag_keyword == True:
+                            s['keyword'] = sys.argv[3]
                         tweetdata.insert(s)
-                        regex.main(s['_id'], s['text'], s['created_at']);
+                        regex.main(s['_id'], s['text'], s['created_at'])
                 next_url = res['metadata']['next_results']
                 pattern = r".*max_id=([0-9]*)\&.*"
                 ite = re.finditer(pattern, next_url)

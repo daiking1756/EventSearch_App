@@ -32,27 +32,61 @@ function handler(req, res){
     });
 }
 
-function check_mongoDB(data, since_date, until_date){
+function check_mongoDB(data, since_date, until_date, keyword){
     // console.log("check_mongoDB!");
-    
-    db.tweetdata.count({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true},function(err, docs) {
-        if (err) {
-            console.log('Error!1');
-            return;
-        }
-        count = docs;
-        if(count > prev_count){ // イベントツイートが追加された場合
-            console.log("insert new tweet!");
-            var diff = count - prev_count;
-            prev_count = count;
-            get_tweetID(diff, data, since_date, until_date);
-            // db_reConnect();
-        }
-    });
+    if(keyword=='none'){
+        db.tweetdata.count({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true, keyword:{$exists:false}},function(err, docs) {
+            if (err) {
+                console.log('Error!1');
+                return;
+            }
+            count = docs;
+            if(count > prev_count){ // イベントツイートが追加された場合
+                console.log("insert new tweet!");
+                var diff = count - prev_count;
+                prev_count = count;
+                get_tweetID(diff, data, since_date, until_date, keyword);
+                // db_reConnect();
+            }
+        });
+    }
+    else{
+        db.tweetdata.count({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, keyword:keyword},function(err, docs) {
+            if (err) {
+                console.log('Error!1');
+                return;
+            }
+            count = docs;
+            if(count > prev_count){ // イベントツイートが追加された場合
+                console.log("insert new tweet!");
+                var diff = count - prev_count;
+                prev_count = count;
+                get_tweetID(diff, data, since_date, until_date, keyword);
+                // db_reConnect();
+            }
+        });
+    }
 }
 
-function get_tweetID(diff, data, since_date, until_date){
-    db.tweetdata.find({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true}).sort({$natural:-1}).limit(diff).toArray(function(err, docs){
+function get_tweetID(diff, data, since_date, until_date, keyword){
+    if(keyword=='none'){
+        db.tweetdata.find({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true, keyword:{$exists:false}}).sort({$natural:-1}).limit(diff).toArray(function(err, docs){
+        // db.tweetdata.find({event_date:{$exists:true, $ne:false}, event_gcpnl:true}).limit(diff).toArray(function(err, docs) {
+            if (err) {
+                console.log('Error!2');
+                return;
+            }
+            docs.forEach(function(doc) {
+                console.log("count :" + count);
+                console.log("tweetID :" + doc.id_str);
+                // console.log("search_word is :" + data[0]);
+                
+                io.sockets.emit('emit_from_server_tweetID', doc.id_str);    // クライアントにツイートIDを送信
+
+            });
+        });
+    }else{
+        db.tweetdata.find({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, keyword:keyword}).sort({$natural:-1}).limit(diff).toArray(function(err, docs){
     // db.tweetdata.find({event_date:{$exists:true, $ne:false}, event_gcpnl:true}).limit(diff).toArray(function(err, docs) {
         if (err) {
             console.log('Error!2');
@@ -67,6 +101,7 @@ function get_tweetID(diff, data, since_date, until_date){
 
         });
     });
+    }
 }
 
 // function db_reConnect(){
@@ -78,34 +113,51 @@ io.sockets.on('connection', function(socket){
     socket.on('emit_from_client_searchStart', function(data){   // 検索ボタンが押された場合
         console.log(data);
 
-        //########################## ↓ 初期化処理 ↓ ##########################
+        //########################## ↓ 初期化処理 ↓ ##############################################################################
+        search_word = data[0];
+
         sd = data[1].split('-');
         ud = data[2].split('-');
         
         since_date = new Date(Number(sd[0]), Number(sd[1])-1, Number(sd[2])+1, -15, 0, 0);
         until_date = new Date(Number(ud[0]), Number(ud[1])-1, Number(ud[2])+1, -15, 0, 0);
         
-        search_word = data[0];
         sort_by = data[3];
-        sort_order = Number(data[4]) * (-1);
+        sort_order = Number(data[4]);
         
-        db.tweetdata.count({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true},function(err, docs) {
-            if (err) {
-            console.log('Error!6');
-            return;
+        keyword = data[5];
+
+        if(keyword == ''){
+            keyword = "none";
         }
-            prev_count = docs;
-        });
-        //########################## ↑ 初期化処理 ↑ ##########################
+
+        if(keyword=='none'){
+            db.tweetdata.count({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true, keyword:{$exists:false}},function(err, docs) {
+                if (err) {
+                    console.log('Error!6');
+                    return;
+                }
+                prev_count = docs;
+            });
+        }else{
+            db.tweetdata.count({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, keyword:keyword},function(err, docs) {
+                if (err) {
+                    console.log('Error!6');
+                    return;
+                }
+                prev_count = docs;
+            });
+        }
+        //########################## ↑ 初期化処理 ↑ ##############################################################################
 
 
-        setInterval(function(){check_mongoDB(data, since_date, until_date)}, 500);    // mongoDBへのツイート追加をチェック
+        setInterval(function(){check_mongoDB(data, since_date, until_date, keyword)}, 500);    // mongoDBへのツイート追加をチェック
 
 
         // console.log("since_date :" + since_date);
         // console.log("until_date :" + until_date);
 
-        exec(get_tweet + ' ' + search_word + ' ' + request_num, (err, stdout, stderr) => {
+        exec(get_tweet + ' ' + search_word + ' ' + request_num + ' ' + keyword, (err, stdout, stderr) => {
             if (err) { 
                 console.log(err); 
             }
@@ -126,8 +178,39 @@ io.sockets.on('connection', function(socket){
 
         var sorttweetIDs = [];
 
-        if(sort_by=="event_date"){
-            db.tweetdata.find({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true}).sort({"event_date":sort_order}).toArray(function(err, docs){
+        if(keyword=="none"){
+            if(sort_by=="event_date"){
+                db.tweetdata.find({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true, keyword:{$exists:false}}).sort({"event_date":sort_order}).toArray(function(err, docs){
+                    if (err) {
+                        console.log('Error!3');
+                        return;
+                    }
+                    docs.forEach(function(doc) {
+                        //io.sockets.emit('emit_from_server_tweetID', doc.id_str);    // クライアントにツイートIDを送信
+                        // console.log(doc.id_str);
+                        sorttweetIDs.push(doc.id_str);
+                    });
+                    console.log(sorttweetIDs);
+                    socket.emit('emit_from_server_sorttweetIDs', sorttweetIDs);
+                });
+            }else if(sort_by=="favorite_count"){
+                db.tweetdata.find({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true, keyword:{$exists:false}}).sort({"favorite_count":sort_order}).toArray(function(err, docs){
+                    if (err) {
+                        console.log('Error!4');
+                        return;
+                    }
+                    docs.forEach(function(doc) {
+                        //io.sockets.emit('emit_from_server_tweetID', doc.id_str);    // クライアントにツイートIDを送信
+                        // console.log(doc.id_str);
+                        sorttweetIDs.push(doc.id_str);
+                    });
+                    console.log(sorttweetIDs);
+                    socket.emit('emit_from_server_sorttweetIDs', sorttweetIDs);
+                });
+            }
+        }else{
+            if(sort_by=="event_date"){
+            db.tweetdata.find({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, keyword:keyword}).sort({"event_date":sort_order}).toArray(function(err, docs){
                 if (err) {
                     console.log('Error!3');
                     return;
@@ -141,7 +224,7 @@ io.sockets.on('connection', function(socket){
                 socket.emit('emit_from_server_sorttweetIDs', sorttweetIDs);
             });
         }else if(sort_by=="favorite_count"){
-            db.tweetdata.find({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, event_gcpnl:true}).sort({"favorite_count":sort_order}).toArray(function(err, docs){
+            db.tweetdata.find({search_word:search_word, event_date:{$gt:since_date, $lt:until_date}, keyword:keyword}).sort({"favorite_count":sort_order}).toArray(function(err, docs){
                 if (err) {
                     console.log('Error!4');
                     return;
@@ -155,22 +238,6 @@ io.sockets.on('connection', function(socket){
                 socket.emit('emit_from_server_sorttweetIDs', sorttweetIDs);
             });
         }
-    });
-});
-
-// 最初に一回、prev_countを初期化するための処理
-setImmediate(function(){
-    db.tweetdata.count({event_date:{$exists:true, $ne:false}, event_gcpnl:true},function(err, docs) {
-        if (err) {
-            console.log('Error!5');
-            return;
         }
-        prev_count = docs;
     });
 });
-
-
-// setInterval(check_mongoDB, 500);    // mongoDBへのツイート追加をチェック
-// setInterval(function(){
-//     console.log(prev_count); // デバッグ用
-// },500);

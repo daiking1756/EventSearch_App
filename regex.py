@@ -171,7 +171,7 @@ def main(tweet_id, text, created_at):
         flag_gcpnl = False
 
         for x in res['entities']:
-            if x['type']=='EVENT':
+            if x['type']=='EVENT' and x['salience'] >= 0.05:
                 tweetdata.update({'_id' : tweet_id},{'$set': {'event_gcpnl':True}})
                 flag_gcpnl = True
                 break

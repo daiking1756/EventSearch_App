@@ -9,42 +9,50 @@
     <title>入力ページ</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <style>
-        @media (min-width: 768px){
+        @media (min-width: 100px){
             html, body {
-              height: 100%;
+              height: 90%;
             }
             #block_left {
                float: left;
                width: 40%;
                margin-left: 30px;
-               background: #00FFFF; 
+               /*background: #00FFFF;    */
+               /* 水色 */
             }
             #block_right {
                float: left;
                width: 40%;
+               max-height: 100%
                margin-left: 30px;
                max-height: 100%;
                /*overflow: auto;*/
-               background: #FF00FF;
+               /*background: #FF00FF;     */
+               /* 紫色 */
             }
             #sort-btn-group{
                 position: fixed;
                 top: 10px;
                 z-index: 999;
-                background: #0000FF;
+                /*background: #0000FF;    */
+                /* 青色 */
             }
             #tweet_area{
                 position: fixed;
-                margin-top:60px;
-                max-height: 100%;
+                margin-top:80px;
                 max-width: 100%;
+                height :90%;
                 overflow: auto;
-                background: #FFFF00;
+                /*background: #FFFF00;    */
+                /* 黄色 */
             }
             .gley_btn{
-                /*background: #F9F9F9;*/
-                background: #FF00FF;
+                background: #F9F9F9;
+                /*background: #FF00FF;*/
                 pointer-events : none;
+            }
+            .sort_btn{
+                width: 100px;
             }
             
             
@@ -76,8 +84,9 @@
                 <div class="form-group">
                     <label>順序：</label>
                     <select id="sort_order" name="sort_order">
-                        <option value="1" selected>降順</option>
-                        <option value="-1">昇順</option>
+                        
+                        <option value="1" selected>昇順</option>
+                        <option value="-1">降順</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -87,10 +96,15 @@
                 <input type="submit" value="検索" class="btn btn-primary">
             </form>
         </div>
+        
+        <!-- <input type="button" class="btn btn-default" value="無効化！！" onClick="$('#test').prop('disabled', false);">
+        <input type="button" id="test" value="fafafa" onClick="console.log('fafafa');" disabled>
+ -->
 
     </div>
-    <div id="block_right">
+    <div id="block_right" class='fafa'>
         <div id="sort-btn-group">
+            <label>並び替え：</label>
             <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-default sort_btn" data-sort="event_date">
                         <input type="radio" autocomplete="off"> 日付順
@@ -100,12 +114,15 @@
                     </label>
             </div>  
 
+            <br>
+            
+            <label>順序　　：</label>
             <div class="btn-group" data-toggle="buttons">
-                    <label id="btn1" class="btn btn-default sort_btn" data-sort="-1">
+                    <label class="btn btn-default sort_btn" data-sort="1">
                         <input type="radio" autocomplete="off"> 昇順
                     </label>
-                    <label class="btn btn-default sort_btn" data-sort="1">
-                        <input  type="radio" autocomplete="off"> 降順
+                    <label class="btn btn-default sort_btn" data-sort="-1">
+                        <input type="radio" autocomplete="off"> 降順
                     </label>
             </div>  
         </div>
@@ -146,6 +163,12 @@
         // $("#sort-btn-group").toggle();
         var container = document.getElementById( "tweet_area" ) ;
         
+        $('.btn-group').on("click", ".disabled", function(event) {
+            return false;
+        });
+
+        $("#test").prop("disabled", false);
+
         //################################## ↑ 初期化処理 ↑ ##################################
         
 
@@ -153,9 +176,8 @@
             var socket = io.connect();
             $('#myForm').submit(function(e){
                 $("#sort-btn-group").toggle();
-                console.log($("#btn1").prop("disabled"));
-                $("#btn1").prop("disabled", true);  // 並び替えボタンを無効にする
-                console.log($("#btn1").prop("disabled"));
+                // $("#btn1").prop("disabled", true);  // 並び替えボタンを無効にする
+                // $(".sort_btn").toggleClass("gley_btn");
                 
                 // $("#btn1").prop("disabled", true);
                 // $("#btn2").prop("disabled", true);
@@ -201,10 +223,11 @@
             });
 
             socket.on('emit_from_server_searchEnd', function(data){
-                alert('ツイートの検索終わったよ！！')
-                $("#sort-btn-group").toggle();
+                // alert('ツイートの検索終わったよ！！')
+                // $("#sort_btn_group").prop("disabled", false); // 並び替えボタンを有効にする
                 
-                $(".sort_btn").prop("disabled", false); // 並び替えボタンを有効にする
+                $("#sort-btn-group").toggle();
+                // $(".sort_btn").prop("disabled", false); // 並び替えボタンを有効にする
                 if($("#twitter-widget-0").length){
                     console.log("twitter-widget-0があるよ。")
                 }else{
