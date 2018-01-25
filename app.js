@@ -19,9 +19,11 @@ app.listen(8000);
 console.log("Server running ... at 192.168.33.10:8000")
 
 prev_count = 0;
+page_name = '/index.html';
+keyword = "none";
 
 function handler(req, res){
-    fs.readFile(__dirname + '/index.html', 'UTF-8', function (err, data) { 
+    fs.readFile(__dirname + page_name, 'UTF-8', function (err, data) { 
         if(err){
             res.writeHead(500);
             return res.end("Error");
@@ -122,11 +124,14 @@ io.sockets.on('connection', function(socket){
         since_date = new Date(Number(sd[0]), Number(sd[1])-1, Number(sd[2])+1, -15, 0, 0);
         until_date = new Date(Number(ud[0]), Number(ud[1])-1, Number(ud[2])+1, -15, 0, 0);
         
-        sort_by = data[3];
-        sort_order = Number(data[4]);
+        sort_by = "event_date";
+        sort_order = 1;
+        // sort_by = data[3];
+        // sort_order = Number(data[4]);
         
-        keyword = data[5];
-
+        keyword = data[3];
+        // keyword = data[5];
+        
         if(keyword == ''){
             keyword = "none";
         }

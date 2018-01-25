@@ -6,75 +6,224 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>入力ページ</title>
+    <title>PR Tweet Search</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <style>
         @media (min-width: 100px){
             html, body {
               height: 90%;
             }
+            
             #block_left {
-               float: left;
-               width: 40%;
-               margin-left: 30px;
                /*background: #00FFFF;    */
                /* 水色 */
+                /*display: flex;
+                justify-content: center; 
+                align-items: center;*/
             }
+            h1{
+                padding-top: 2%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .container{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
             #block_right {
-               float: left;
-               width: 40%;
                max-height: 100%
-               margin-left: 30px;
-               max-height: 100%;
                /*overflow: auto;*/
-               /*background: #FF00FF;     */
+               background: #FFFFFF;     
                /* 紫色 */
             }
-            #sort-btn-group{
-                position: fixed;
-                top: 10px;
+            #menu{
+                position: sticky;
+                top: 0px;
                 z-index: 999;
-                /*background: #0000FF;    */
+                background: #acd9ec; 
                 /* 青色 */
             }
             #tweet_area{
-                position: fixed;
-                margin-top:80px;
+                /*position: fixed;*/
+                margin-top:10px;
                 max-width: 100%;
                 height :90%;
-                overflow: auto;
-                /*background: #FFFF00;    */
+                overflow: scroll;
+                /*background: #FFFF00; */
                 /* 黄色 */
+
+                text-align: center;
+
             }
-            .gley_btn{
-                background: #F9F9F9;
-                /*background: #FF00FF;*/
-                pointer-events : none;
+            .twitter-tweet{
+                /*position: fixed;*/
+                margin: 0 auto;
+                /*background: #00FF00;    */
+                /* 黄色 */
             }
             .sort_btn{
                 width: 100px;
             }
+            .page{
+                background-color: #bfebfd;
+            }
+
+
             
-            
-        }
+            /* ######################## ↓ Loading Animation用 ↓ ######################## */
+            .loader,
+            .loader:before,
+            .loader:after {
+              border-radius: 50%;
+              width: 2.0em;
+              height: 2.0em;
+              -webkit-animation-fill-mode: both;
+              animation-fill-mode: both;
+              -webkit-animation: load7 1.0s infinite ease-in-out;
+              animation: load7 1.0s infinite ease-in-out;
+            }
+            .loader {
+              color: #0F0F0F;
+              font-size: 10px;
+              margin: 0px auto;
+              position: relative;
+              text-indent: -9999em;
+              -webkit-transform: translateZ(0);
+              -ms-transform: translateZ(0);
+              transform: translateZ(0);
+              -webkit-animation-delay: -0.16s;
+              animation-delay: -0.16s;
+            }
+            .loader:before,
+            .loader:after {
+              content: '';
+              position: absolute;
+              top: 0;
+            }
+            .loader:before {
+              left: -3.5em;
+              -webkit-animation-delay: -0.32s;
+              animation-delay: -0.32s;
+            }
+            .loader:after {
+              left: 3.5em;
+            }
+            @-webkit-keyframes load7 {
+              0%,
+              80%,
+              100% {
+                box-shadow: 0 2.5em 0 -1.3em;
+              }
+              40% {
+                box-shadow: 0 2.5em 0 0;
+              }
+            }
+            @keyframes load7 {
+              0%,
+              80%,
+              100% {
+                box-shadow: 0 2.5em 0 -1.3em;
+              }
+              40% {
+                box-shadow: 0 2.5em 0 0;
+              }
+            }
+
+            /* ######################## ↑ Loading Animation用 ↑ ######################## */
+
+
+            /* ######################## ↓ Help Animation用 ↓ ######################## */
+            .message {
+                background:#181818;
+                color:#FFF;
+                position: absolute;
+                top: -250px;
+                left: 0;
+                width: 100%;
+                height: 250px;
+                padding: 20px;
+                transition: top 300ms cubic-bezier(0.17, 0.04, 0.03, 0.94);
+                overflow: hidden;
+                box-sizing: border-box;
+                  
+                }
+
+                .message h1 {
+                  color:#FFF;
+                }
+
+                #toggle {
+                  position:absolute;
+                  appearance:none;
+                  cursor:pointer;
+                  left:-100%;
+                  top:-100%;
+                }
+
+                #toggle + label {
+                  position:absolute;
+                  cursor:pointer;
+                  padding:10px;
+                  background: #26ae90;
+                width: 100px;
+                border-radius: 10%;
+                padding: 8px 10px;
+                color: #FFF;
+                line-height:20px;
+                font-size:12px;
+                text-align:center;
+                -webkit-font-smoothing: antialiased;
+                cursor: pointer;
+                  margin:20px 50px;
+                  transition:all 500ms ease;
+                }
+                #toggle + label:after {
+                  content:"概要" 
+                }
+
+                .container {
+                transition: margin 300ms cubic-bezier(0.17, 0.04, 0.03, 0.94);
+                  padding:5em 3em;
+                }
+
+                #toggle:checked ~ .message {
+                  top: 0;
+                }
+
+                #toggle:checked ~ .container {
+                  margin-top: 250px;
+                }
+
+                #toggle:checked + label {
+                  background:#dd6149;
+                }
+
+                #toggle:checked + label:after {
+                  content:"Close"
+                }
+            }
+            /* ######################## ↑ Help Animation用 ↑ ######################## */
 
     </style>
 </head>
 <body>
-    <div id="block_left">
-        <h1>Event Tweet Search</h1>
+    <div id="block_left" class="page">
+        <h1>PR Tweet Search</h1>
         <div class="container">
             <form id="myForm" action="/app.js" method="get" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label>地名：</label>
-                    <input type="text" id="message" name="message" placeholder="例：渋谷" required>
+                    <label>地名*：</label>
+                    <input type="text" id="message" name="message" placeholder="例：渋谷" class="form-control input-lg" required>
                 </div>
                 <div class="form-group">
-                    <label>日付：</label>
-                    <input type="date" id="since_date" name="since_date" required> ~
-                    <input type="date" id="until_date" name="until_date" required>
+                    <label>期間*：</label>
+                    <input type="date" id="since_date" name="since_date" class="form-control input-lg" required> ~
+                    <input type="date" id="until_date" name="until_date" class="form-control input-lg" required>
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label>並び替え：</label>
                     <select id="sort_by" name="sort_by">
                       <option value="event_date" selected>日付順</option>
@@ -88,25 +237,28 @@
                         <option value="1" selected>昇順</option>
                         <option value="-1">降順</option>
                     </select>
-                </div>
+                </div> -->
                 <div class="form-group">
                     <label>キーワード：</label>
-                    <input type="text" id="keyword" name="keyword" placeholder="例：ライブ"><br>    
+                    <input type="text" id="keyword" name="keyword" placeholder="例：ライブ" class="form-control input-lg" ><br>    
                 </div>
-                <input type="submit" value="検索" class="btn btn-primary">
+                <input type="submit" value="検索" class="btn btn-primary btn-lg btn-block">
             </form>
         </div>
         
-        <!-- <input type="button" class="btn btn-default" value="無効化！！" onClick="$('#test').prop('disabled', false);">
-        <input type="button" id="test" value="fafafa" onClick="console.log('fafafa');" disabled>
- -->
-
+        <!-- <input type="checkbox" name="toggle" id="toggle">
+        <label for="toggle"></label>
+        <div class="message">
+            <h1> イベントを探しましょう</h1>
+            <h2>Now Click the Heart button in the bottom to support CSS3</h2>
+        </div> -->
     </div>
-    <div id="block_right" class='fafa'>
-        <div id="sort-btn-group">
+    
+    <div id="block_right" class="page">
+        <div id="menu">
             <label>並び替え：</label>
             <div class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-default sort_btn" data-sort="event_date">
+                    <label class="btn btn-default sort_btn btn" data-sort="event_date">
                         <input type="radio" autocomplete="off"> 日付順
                     </label>
                     <label class="btn btn-default sort_btn" data-sort="favorite_count">
@@ -124,9 +276,13 @@
                     <label class="btn btn-default sort_btn" data-sort="-1">
                         <input type="radio" autocomplete="off"> 降順
                     </label>
-            </div>  
+            </div>
+            <div class="loader">Loading Animation...</div>
+
+            <input type="button" class="btn btn-success" value="戻る" onClick="$.scrollify.previous();">
+            
         </div>
-        
+
         <div id="tweet_area">
             <!-- Embedded Single Tweet -->
             <!-- Embedded Single Tweet -->
@@ -134,19 +290,844 @@
             <!-- ..................... -->
         </div>
     </div>
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script>
+        (function (global,factory) {
+          "use strict";
+          if (typeof define === 'function' && define.amd) {
+            // AMD. Register as an anonymous module.
+            define(['jquery'], function($) {
+              return factory($, global, global.document);
+            });
+          } else if (typeof module === 'object' && module.exports) {
+            // Node/CommonJS
+            module.exports = factory(require('jquery'), global, global.document);
+          } else {
+            // Browser globals
+            factory(jQuery, global, global.document);
+          }
+        }(typeof window !== 'undefined' ? window : this, function ($, window, document, undefined) {
+          "use strict";
+          var heights = [],
+            names = [],
+            elements = [],
+            overflow = [],
+            index = 0,
+            currentIndex = 0,
+            interstitialIndex = 1,
+            hasLocation = false,
+            timeoutId,
+            timeoutId2,
+            $window = $(window),
+            portHeight,
+            top = $window.scrollTop(),
+            scrollable = false,
+            locked = false,
+            scrolled = false,
+            manualScroll,
+            swipeScroll,
+            util,
+            disabled = false,
+            scrollSamples = [],
+            scrollTime = new Date().getTime(),
+            firstLoad = true,
+            initialised = false,
+            destination = 0,
+            wheelEvent = 'onwheel' in document ? 'wheel' : document.onmousewheel !== undefined ? 'mousewheel' : 'DOMMouseScroll',
+            settings = {
+              //section should be an identifier that is the same for each section
+              section: ".section",
+              sectionName: "section-name",
+              interstitialSection: "",
+              easing: "easeOutExpo",
+              scrollSpeed: 1100,
+              offset: 0,
+              scrollbars: true,
+              target:"html,body",
+              standardScrollElements: false,
+              setHeights: true,
+              overflowScroll:true,
+              updateHash: true,
+              touchScroll:true,
+              before:function() {},
+              after:function() {},
+              afterResize:function() {},
+              afterRender:function() {}
+            };
+          function getportHeight() {
+            return ($window.height() + settings.offset);
+          }
+          function animateScroll(index,instant,callbacks,toTop) {
+            if(currentIndex===index) {
+              callbacks = false;
+            }
+            if(disabled===true) {
+              return true;
+            }
+            if(names[index]) {
+              scrollable = false;
+              if(firstLoad===true) {
+                settings.afterRender();
+                firstLoad = false;
+              }
+              if(callbacks) {
+                if( typeof settings.before == 'function' && settings.before(index,elements) === false ){
+                  return true;
+                }
+              }
+              interstitialIndex = 1;
+              destination = heights[index];
+              if(firstLoad===false && currentIndex>index && toTop===false) {
+                //We're going backwards
+                if(overflow[index]) {
+                  portHeight = getportHeight();
 
+                  interstitialIndex = parseInt(elements[index].outerHeight()/portHeight);
+
+                  destination = parseInt(heights[index])+(elements[index].outerHeight()-portHeight);
+                }
+              }
+
+
+              if(settings.updateHash && settings.sectionName && !(firstLoad===true && index===0)) {
+                if(history.pushState) {
+                    try {
+                      history.replaceState(null, null, names[index]);
+                    } catch (e) {
+                      if(window.console) {
+                        console.warn("Scrollify warning: Page must be hosted to manipulate the hash value.");
+                      }
+                    }
+
+                } else {
+                  window.location.hash = names[index];
+                }
+              }
+
+              currentIndex = index;
+              if(instant) {
+                $(settings.target).stop().scrollTop(destination);
+                if(callbacks) {
+                  settings.after(index,elements);
+                }
+              } else {
+                locked = true;
+                if( $().velocity ) {
+                  $(settings.target).stop().velocity('scroll', {
+                    duration: settings.scrollSpeed,
+                    easing: settings.easing,
+                    offset: destination,
+                    mobileHA: false
+                  });
+                } else {
+                  $(settings.target).stop().animate({
+                    scrollTop: destination
+                  }, settings.scrollSpeed,settings.easing);
+                }
+
+                if(window.location.hash.length && settings.sectionName && window.console) {
+                  try {
+                    if($(window.location.hash).length) {
+                      console.warn("Scrollify warning: ID matches hash value - this will cause the page to anchor.");
+                    }
+                  } catch (e) {}
+                }
+                $(settings.target).promise().done(function(){
+                  locked = false;
+                  firstLoad = false;
+                  if(callbacks) {
+                    settings.after(index,elements);
+                  }
+                });
+              }
+
+            }
+          }
+
+          function isAccelerating(samples) {
+            function average(num) {
+              var sum = 0;
+
+              var lastElements = samples.slice(Math.max(samples.length - num, 1));
+
+              for(var i = 0; i < lastElements.length; i++){
+                  sum += lastElements[i];
+              }
+
+              return Math.ceil(sum/num);
+            }
+
+            var avEnd = average(10);
+            var avMiddle = average(70);
+
+            if(avEnd >= avMiddle) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+          var scrollify = function(options) {
+            initialised = true;
+            $.easing['easeOutExpo'] = function(x, t, b, c, d) {
+              return (t==d) ? b+c : c * (-Math.pow(2, -10 * t/d) + 1) + b;
+            };
+
+            manualScroll = {
+              handleMousedown:function() {
+                if(disabled===true) {
+                  return true;
+                }
+                scrollable = false;
+                scrolled = false;
+              },
+              handleMouseup:function() {
+                if(disabled===true) {
+                  return true;
+                }
+                scrollable = true;
+                if(scrolled) {
+                  //instant,callbacks
+                  manualScroll.calculateNearest(false,true);
+                }
+              },
+              handleScroll:function() {
+                if(disabled===true) {
+                  return true;
+                }
+                if(timeoutId){
+                  clearTimeout(timeoutId);
+                }
+
+                timeoutId = setTimeout(function(){
+                  scrolled = true;
+                  if(scrollable===false) {
+                    return false;
+                  }
+                  scrollable = false;
+                  //instant,callbacks
+                  manualScroll.calculateNearest(false,true);
+                }, 200);
+              },
+              calculateNearest:function(instant,callbacks) {
+                top = $window.scrollTop();
+                var i =1,
+                  max = heights.length,
+                  closest = 0,
+                  prev = Math.abs(heights[0] - top),
+                  diff;
+                for(;i<max;i++) {
+                  diff = Math.abs(heights[i] - top);
+
+                  if(diff < prev) {
+                    prev = diff;
+                    closest = i;
+                  }
+                }
+                if((atBottom() && closest>index) || atTop()) {
+                  index = closest;
+                  //index, instant, callbacks, toTop
+                  animateScroll(closest,instant,callbacks,false);
+                }
+              },
+              wheelHandler:function(e) {
+                if(disabled===true) {
+                  return true;
+                } else if(settings.standardScrollElements) {
+                  if($(e.target).is(settings.standardScrollElements) || $(e.target).closest(settings.standardScrollElements).length) {
+                    return true;
+                  }
+                }
+                if(!overflow[index]) {
+                  e.preventDefault();
+                }
+                var currentScrollTime = new Date().getTime();
+
+
+                e = e || window.event;
+                var value = e.originalEvent.wheelDelta || -e.originalEvent.deltaY || -e.originalEvent.detail;
+                var delta = Math.max(-1, Math.min(1, value));
+
+                //delta = delta || -e.originalEvent.detail / 3 || e.originalEvent.wheelDelta / 120;
+
+                if(scrollSamples.length > 149){
+                  scrollSamples.shift();
+                }
+                //scrollSamples.push(Math.abs(delta*10));
+                scrollSamples.push(Math.abs(value));
+
+                if((currentScrollTime-scrollTime) > 200){
+                  scrollSamples = [];
+                }
+                scrollTime = currentScrollTime;
+
+
+                if(locked) {
+                  return false;
+                }
+                if(delta<0) {
+                  if(index<heights.length-1) {
+                    if(atBottom()) {
+                      if(isAccelerating(scrollSamples)) {
+                        e.preventDefault();
+                        index++;
+                        locked = true;
+                        //index, instant, callbacks, toTop
+                        animateScroll(index,false,true, false);
+                      } else {
+                        return false;
+                      }
+                    }
+                  }
+                } else if(delta>0) {
+                  if(index>0) {
+                    if(atTop()) {
+                      if(isAccelerating(scrollSamples)) {
+                        e.preventDefault();
+                        index--;
+                        locked = true;
+                        //index, instant, callbacks, toTop
+                        animateScroll(index,false,true, false);
+                      } else {
+                        return false
+                      }
+                    }
+                  }
+                }
+
+              },
+              keyHandler:function(e) {
+                if(disabled===true || document.activeElement.readOnly===false) {
+                  return true;
+                }
+                if(locked===true) {
+                  return false;
+                }
+                if(e.keyCode==38 || e.keyCode==33) {
+                  if(index>0) {
+                    if(atTop()) {
+                      e.preventDefault();
+                      index--;
+                      //index, instant, callbacks, toTop
+                      animateScroll(index,false,true,false);
+                    }
+                  }
+                } else if(e.keyCode==40 || e.keyCode==34) {
+                  if(index<heights.length-1) {
+                    if(atBottom()) {
+                      e.preventDefault();
+                      index++;
+                      //index, instant, callbacks, toTop
+                      animateScroll(index,false,true,false);
+                    }
+                  }
+                }
+              },
+              init:function() {
+                if(settings.scrollbars) {
+                  $window.on('mousedown', manualScroll.handleMousedown);
+                  $window.on('mouseup', manualScroll.handleMouseup);
+                  $window.on('scroll', manualScroll.handleScroll);
+                } else {
+                  $("body").css({"overflow":"hidden"});
+                }
+                $window.on(wheelEvent,manualScroll.wheelHandler);
+                //$(document).bind(wheelEvent,manualScroll.wheelHandler);
+                $window.on('keydown', manualScroll.keyHandler);
+              }
+            };
+
+            swipeScroll = {
+              touches : {
+                "touchstart": {"y":-1,"x":-1},
+                "touchmove" : {"y":-1,"x":-1},
+                "touchend"  : false,
+                "direction" : "undetermined"
+              },
+              options:{
+                "distance" : 30,
+                "timeGap" : 800,
+                "timeStamp" : new Date().getTime()
+              },
+              touchHandler: function(event) {
+                if(disabled===true) {
+                  return true;
+                } else if(settings.standardScrollElements) {
+                  if($(event.target).is(settings.standardScrollElements) || $(event.target).closest(settings.standardScrollElements).length) {
+                    return true;
+                  }
+                }
+                var touch;
+                if (typeof event !== 'undefined'){
+                  if (typeof event.touches !== 'undefined') {
+                    touch = event.touches[0];
+                    switch (event.type) {
+                      case 'touchstart':
+                        swipeScroll.touches.touchstart.y = touch.pageY;
+                        swipeScroll.touches.touchmove.y = -1;
+
+                        swipeScroll.touches.touchstart.x = touch.pageX;
+                        swipeScroll.touches.touchmove.x = -1;
+
+                        swipeScroll.options.timeStamp = new Date().getTime();
+                        swipeScroll.touches.touchend = false;
+                      case 'touchmove':
+                        swipeScroll.touches.touchmove.y = touch.pageY;
+                        swipeScroll.touches.touchmove.x = touch.pageX;
+                        if(swipeScroll.touches.touchstart.y!==swipeScroll.touches.touchmove.y && (Math.abs(swipeScroll.touches.touchstart.y-swipeScroll.touches.touchmove.y)>Math.abs(swipeScroll.touches.touchstart.x-swipeScroll.touches.touchmove.x))) {
+                          //if(!overflow[index]) {
+                            event.preventDefault();
+                          //}
+                          swipeScroll.touches.direction = "y";
+                          if((swipeScroll.options.timeStamp+swipeScroll.options.timeGap)<(new Date().getTime()) && swipeScroll.touches.touchend == false) {
+
+                            swipeScroll.touches.touchend = true;
+                            if (swipeScroll.touches.touchstart.y > -1) {
+
+                              if(Math.abs(swipeScroll.touches.touchmove.y-swipeScroll.touches.touchstart.y)>swipeScroll.options.distance) {
+                                if(swipeScroll.touches.touchstart.y < swipeScroll.touches.touchmove.y) {
+
+                                  swipeScroll.up();
+
+                                } else {
+                                  swipeScroll.down();
+
+                                }
+                              }
+                            }
+                          }
+                        }
+                        break;
+                      case 'touchend':
+                        if(swipeScroll.touches[event.type]===false) {
+                          swipeScroll.touches[event.type] = true;
+                          if (swipeScroll.touches.touchstart.y > -1 && swipeScroll.touches.touchmove.y > -1 && swipeScroll.touches.direction==="y") {
+
+                            if(Math.abs(swipeScroll.touches.touchmove.y-swipeScroll.touches.touchstart.y)>swipeScroll.options.distance) {
+                              if(swipeScroll.touches.touchstart.y < swipeScroll.touches.touchmove.y) {
+                                swipeScroll.up();
+
+                              } else {
+                                swipeScroll.down();
+
+                              }
+                            }
+                            swipeScroll.touches.touchstart.y = -1;
+                            swipeScroll.touches.touchstart.x = -1;
+                            swipeScroll.touches.direction = "undetermined";
+                          }
+                        }
+                      default:
+                        break;
+                    }
+                  }
+                }
+              },
+              down: function() {
+
+                if(index<heights.length) {
+
+                  if(atBottom() && index<heights.length-1) {
+
+                    index++;
+                    //index, instant, callbacks, toTop
+                    animateScroll(index,false,true,false);
+                  } else {
+                    portHeight = getportHeight();
+                    if(Math.floor(elements[index].height()/portHeight)>interstitialIndex) {
+
+                      interstitialScroll(parseInt(heights[index])+(portHeight*interstitialIndex));
+                      interstitialIndex += 1;
+
+                    } else {
+                      interstitialScroll(parseInt(heights[index])+(elements[index].outerHeight()-portHeight));
+                    }
+
+                  }
+                }
+              },
+              up: function() {
+                if(index>=0) {
+                  if(atTop() && index>0) {
+
+                    index--;
+                    //index, instant, callbacks, toTop
+                    animateScroll(index,false,true,false);
+                  } else {
+
+                    if(interstitialIndex>2) {
+                      portHeight = getportHeight();
+
+                      interstitialIndex -= 1;
+                      interstitialScroll(parseInt(heights[index])+(portHeight*interstitialIndex));
+
+                    } else {
+
+                      interstitialIndex = 1;
+                      interstitialScroll(parseInt(heights[index]));
+                    }
+                  }
+
+                }
+              },
+              init: function() {
+                if (document.addEventListener && settings.touchScroll) {
+                  var eventListenerOptions = {
+                    passive: false
+                  };
+                  document.addEventListener('touchstart', swipeScroll.touchHandler, eventListenerOptions);
+                  document.addEventListener('touchmove', swipeScroll.touchHandler, eventListenerOptions);
+                  document.addEventListener('touchend', swipeScroll.touchHandler, eventListenerOptions);
+                }
+              }
+            };
+
+
+            util = {
+              refresh:function(withCallback,scroll) {
+                clearTimeout(timeoutId2);
+                timeoutId2 = setTimeout(function() {
+                  //retain position
+                  sizePanels(true);
+                  //scroll, firstLoad
+                  calculatePositions(scroll,false);
+                  if(withCallback) {
+                      settings.afterResize();
+                  }
+                },400);
+              },
+              handleUpdate:function() {
+                //callbacks, scroll
+                //changed from false,true to false,false
+                util.refresh(false,false);
+              },
+              handleResize:function() {
+                //callbacks, scroll
+                util.refresh(true,false);
+              },
+              handleOrientation:function() {
+                //callbacks, scroll
+                util.refresh(true,true);
+              }
+            };
+            settings = $.extend(settings, options);
+
+            //retain position
+            sizePanels(false);
+
+            calculatePositions(false,true);
+
+            if(true===hasLocation) {
+              //index, instant, callbacks, toTop
+              animateScroll(index,false,true,true);
+            } else {
+              setTimeout(function() {
+                //instant,callbacks
+                manualScroll.calculateNearest(true,false);
+              },200);
+            }
+            if(heights.length) {
+              manualScroll.init();
+              swipeScroll.init();
+
+              $window.on("resize",util.handleResize);
+              if (document.addEventListener) {
+                window.addEventListener("orientationchange", util.handleOrientation, false);
+              }
+            }
+            function interstitialScroll(pos) {
+              if( $().velocity ) {
+                $(settings.target).stop().velocity('scroll', {
+                  duration: settings.scrollSpeed,
+                  easing: settings.easing,
+                  offset: pos,
+                  mobileHA: false
+                });
+              } else {
+                $(settings.target).stop().animate({
+                  scrollTop: pos
+                }, settings.scrollSpeed,settings.easing);
+              }
+            }
+
+            function sizePanels(keepPosition) {
+              if(keepPosition) {
+                top = $window.scrollTop();
+              }
+
+              var selector = settings.section;
+              overflow = [];
+              if(settings.interstitialSection.length) {
+                selector += "," + settings.interstitialSection;
+              }
+              if(settings.scrollbars===false) {
+                settings.overflowScroll = false;
+              }
+              portHeight = getportHeight();
+              $(selector).each(function(i) {
+                var $this = $(this);
+
+                if(settings.setHeights) {
+                  if($this.is(settings.interstitialSection)) {
+                    overflow[i] = false;
+                  } else {
+                    if(($this.css("height","auto").outerHeight()<portHeight) || $this.css("overflow")==="hidden") {
+                      $this.css({"height":portHeight});
+
+                      overflow[i] = false;
+                    } else {
+
+                      $this.css({"height":$this.height()});
+
+                      if(settings.overflowScroll) {
+                        overflow[i] = true;
+                      } else {
+                        overflow[i] = false;
+                      }
+                    }
+
+                  }
+
+                } else {
+
+                  if(($this.outerHeight()<portHeight) || (settings.overflowScroll===false)) {
+                    overflow[i] = false;
+                  } else {
+                    overflow[i] = true;
+                  }
+                }
+              });
+              if(keepPosition) {
+                $window.scrollTop(top);
+              }
+            }
+            function calculatePositions(scroll,firstLoad) {
+              var selector = settings.section;
+              if(settings.interstitialSection.length) {
+                selector += "," + settings.interstitialSection;
+              }
+              heights = [];
+              names = [];
+              elements = [];
+              $(selector).each(function(i){
+                  var $this = $(this);
+                  if(i>0) {
+                    heights[i] = parseInt($this.offset().top) + settings.offset;
+                  } else {
+                    heights[i] = parseInt($this.offset().top);
+                  }
+                  if(settings.sectionName && $this.data(settings.sectionName)) {
+                    names[i] = "#" + $this.data(settings.sectionName).toString().replace(/ /g,"-");
+                  } else {
+                    if($this.is(settings.interstitialSection)===false) {
+                      names[i] = "#" + (i + 1);
+                    } else {
+                      names[i] = "#";
+                      if(i===$(selector).length-1 && i>1) {
+                        heights[i] = heights[i-1] + (parseInt($($(selector)[i-1]).outerHeight()) - parseInt($(window).height())) + parseInt($this.outerHeight());
+                      }
+                    }
+                  }
+                  elements[i] = $this;
+                  try {
+                    if($(names[i]).length && window.console) {
+                      console.warn("Scrollify warning: Section names can't match IDs - this will cause the browser to anchor.");
+                    }
+                  } catch (e) {}
+
+                  if(window.location.hash===names[i]) {
+                    index = i;
+                    hasLocation = true;
+                  }
+
+              });
+
+              if(true===scroll) {
+                //index, instant, callbacks, toTop
+                animateScroll(index,false,false,false);
+              }
+            }
+
+            function atTop() {
+              if(!overflow[index]) {
+                return true;
+              }
+              top = $window.scrollTop();
+              if(top>parseInt(heights[index])) {
+                return false;
+              } else {
+                return true;
+              }
+            }
+            function atBottom() {
+              if(!overflow[index]) {
+                return true;
+              }
+              top = $window.scrollTop();
+              portHeight = getportHeight();
+
+              if(top<parseInt(heights[index])+(elements[index].outerHeight()-portHeight)-28) {
+
+                return false;
+
+              } else {
+                return true;
+              }
+            }
+          }
+
+          function move(panel,instant) {
+            var z = names.length;
+            for(;z>=0;z--) {
+              if(typeof panel === 'string') {
+                if (names[z]===panel) {
+                  index = z;
+                  //index, instant, callbacks, toTop
+                  animateScroll(z,instant,true,true);
+                }
+              } else {
+                if(z===panel) {
+                  index = z;
+                  //index, instant, callbacks, toTop
+                  animateScroll(z,instant,true,true);
+                }
+              }
+            }
+          }
+          scrollify.move = function(panel) {
+            if(panel===undefined) {
+              return false;
+            }
+            if(panel.originalEvent) {
+              panel = $(this).attr("href");
+            }
+            move(panel,false);
+          };
+          scrollify.instantMove = function(panel) {
+            if(panel===undefined) {
+              return false;
+            }
+            move(panel,true);
+          };
+          scrollify.next = function() {
+            if(index<names.length) {
+              index += 1;
+              //index, instant, callbacks, toTop
+              animateScroll(index,false,true,true);
+            }
+          };
+          scrollify.previous = function() {
+            if(index>0) {
+              index -= 1;
+              //index, instant, callbacks, toTop
+              animateScroll(index,false,true,true);
+            }
+          };
+          scrollify.instantNext = function() {
+            if(index<names.length) {
+              index += 1;
+              //index, instant, callbacks, toTop
+              animateScroll(index,true,true,true);
+            }
+          };
+          scrollify.instantPrevious = function() {
+            if(index>0) {
+              index -= 1;
+              //index, instant, callbacks, toTop
+              animateScroll(index,true,true,true);
+            }
+          };
+          scrollify.destroy = function() {
+            if(!initialised) {
+              return false;
+            }
+            if(settings.setHeights) {
+              $(settings.section).each(function() {
+                $(this).css("height","auto");
+              });
+            }
+            $window.off("resize",util.handleResize);
+            if(settings.scrollbars) {
+              $window.off('mousedown', manualScroll.handleMousedown);
+              $window.off('mouseup', manualScroll.handleMouseup);
+              $window.off('scroll', manualScroll.handleScroll);
+            }
+            $window.off(wheelEvent,manualScroll.wheelHandler);
+            $window.off('keydown', manualScroll.keyHandler);
+
+            if (document.addEventListener && settings.touchScroll) {
+              document.removeEventListener('touchstart', swipeScroll.touchHandler, false);
+              document.removeEventListener('touchmove', swipeScroll.touchHandler, false);
+              document.removeEventListener('touchend', swipeScroll.touchHandler, false);
+            }
+            heights = [];
+            names = [];
+            elements = [];
+            overflow = [];
+          };
+          scrollify.update = function() {
+            if(!initialised) {
+              return false;
+            }
+            util.handleUpdate();
+          };
+          scrollify.current = function() {
+            return elements[index];
+          };
+          scrollify.currentIndex = function() {
+            return index;
+          };
+          scrollify.disable = function() {
+            disabled = true;
+          };
+          scrollify.enable = function() {
+            disabled = false;
+            if (initialised) {
+              //instant,callbacks
+              manualScroll.calculateNearest(false,false);
+            }
+          };
+          scrollify.isDisabled = function() {
+            return disabled;
+          };
+          scrollify.setOptions = function(updatedOptions) {
+            if(!initialised) {
+              return false;
+            }
+            if(typeof updatedOptions === "object") {
+              settings = $.extend(settings, updatedOptions);
+              util.handleUpdate();
+            } else if(window.console) {
+              console.warn("Scrollify warning: setOptions expects an object.");
+            }
+          };
+          $.scrollify = scrollify;
+          return scrollify;
+        }));
+
+      </script>
+    <script>
+        var option = {
+            section : '.page', // 対象を指定
+            easing: "swing", // イージングをしてい(jQueryのanimation)
+            scrollSpeed: 600, // スクロール時の速度
+            scrollbars: true, // スクロールバーを表示するか
+        };
+
+        $(function() {
+            $.scrollify(option); // scrollifyの実行
+        });
+    </script>
     <script>
         //################################## ↓ 初期化処理 ↓ ##################################
         var now = new Date();
             year = now.getFullYear(),
             month = now.getMonth()+1,   // 月が0~11であるため、+1をして換算
             day = now.getDate();
-        // console.log(now.getFullYear() + '-' + Number(now.getMonth()+1+1+1) + '-' +  now.getDate());
-
+        
         $('#since_date').attr('value', year + '-' + addzero(month) + '-' +  addzero(day));
         now.setMonth(now.getMonth()+1+1);   // とりあえず1ヶ月後に設定  
         $('#until_date').attr('value', year + '-' + addzero(now.getMonth()) + '-' +  addzero(day));
@@ -160,7 +1141,7 @@
             }
         }
         
-        // $("#sort-btn-group").toggle();
+        $(".loader").toggle();
         var container = document.getElementById( "tweet_area" ) ;
         
         $('.btn-group').on("click", ".disabled", function(event) {
@@ -170,12 +1151,22 @@
         $("#test").prop("disabled", false);
 
         //################################## ↑ 初期化処理 ↑ ##################################
-        
 
         $(function(){
             var socket = io.connect();
             $('#myForm').submit(function(e){
-                $("#sort-btn-group").toggle();
+                $.scrollify.next(); // 画面のスクロール
+                
+                wsize = window.innerWidth;
+                if(wsize <= 560){
+                    wsize -= 30;
+                }
+                console.log("wsize :" + wsize);
+
+                $(".loader").toggle();
+                $(".sort_btn").toggle();
+                
+                // $("#menu").toggle();
                 // $("#btn1").prop("disabled", true);  // 並び替えボタンを無効にする
                 // $(".sort_btn").toggleClass("gley_btn");
                 
@@ -194,8 +1185,8 @@
                 data.push($('#message').val());
                 data.push($('#since_date').val());
                 data.push($('#until_date').val());
-                data.push($('#sort_by').val());
-                data.push($('#sort_order').val());
+                // data.push($('#sort_by').val());
+                // data.push($('#sort_order').val());
                 data.push($('#keyword').val());
                 console.log(data);
 
@@ -223,10 +1214,11 @@
             });
 
             socket.on('emit_from_server_searchEnd', function(data){
-                // alert('ツイートの検索終わったよ！！')
+                console.log('ツイートの検索終わったよ');
                 // $("#sort_btn_group").prop("disabled", false); // 並び替えボタンを有効にする
-                
-                $("#sort-btn-group").toggle();
+                $(".loader").toggle();
+                $(".sort_btn").toggle();
+                // $("#menu").toggle();
                 // $(".sort_btn").prop("disabled", false); // 並び替えボタンを有効にする
                 if($("#twitter-widget-0").length){
                     console.log("twitter-widget-0があるよ。")
@@ -245,7 +1237,7 @@
                             conversation: "none" ,
                             theme: "dark",
                             // linkColor: "#D36015" ,
-                            width: 300 ,
+                            width: wsize ,
                             align: "center" ,
                             lang: "ja" ,
                             dnt: true ,
