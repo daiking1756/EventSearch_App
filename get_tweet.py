@@ -139,7 +139,7 @@ while(count <= request_num):
                         if flag_keyword == True:
                             s['keyword'] = sys.argv[3]
                         tweetdata.insert(s)
-                        regex.main(s['_id'], s['text'], s['created_at'])
+                        regex.main(s['_id'], s['text'], s['created_at'], sys.argv[4])
                 next_url = res['metadata']['next_results']
                 pattern = r".*max_id=([0-9]*)\&.*"
                 ite = re.finditer(pattern, next_url)

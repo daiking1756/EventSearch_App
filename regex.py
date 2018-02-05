@@ -158,9 +158,11 @@ body = {
     }
 
 
-def main(tweet_id, text, created_at):
+def main(tweet_id, text, created_at, filter):
     result, tdatetime, pattern_num = search_all(text, created_at, date_pattern_list)
+    event_score = 0
     if result:
+        event_score = 1
         tweetdata.update({'_id' : tweet_id},{'$set': {'event_date':tdatetime, 'pattern_num':pattern_num}})
 
         ############# ↓ GCP Natural Language Entities analyze ↓ #############
@@ -168,19 +170,25 @@ def main(tweet_id, text, created_at):
         # pprint(body)
         res = requests.post(url, headers=header, json=body).json()
         
-        flag_gcpnl = False
+        salience = 0
+        # entity_num = 0
 
         for x in res['entities']:
-            if x['type']=='EVENT' and x['salience'] >= 0.05:
-                tweetdata.update({'_id' : tweet_id},{'$set': {'event_gcpnl':True}})
-                flag_gcpnl = True
-                break
+            if x['type']=='EVENT':
+                event_score = 2
+                salience += x['salience']
+                
+        if salience >= 0.2:
+                # tweetdata.update({'_id' : tweet_id},{'$set': {'event_gcpnl':True}})
+                # flag_gcpnl = True
+                event_score = 3
+                # break
 
-        if flag_gcpnl==False:
-            tweetdata.update({'_id' : tweet_id},{'$set': {'event_gcpnl':False}})
+        # if flag_gcpnl==False:
+        tweetdata.update({'_id' : tweet_id},{'$set': {'event_score':event_score}})
 
     else:
-        tweetdata.update({'_id' : tweet_id},{'$set': {'event_date':False, 'pattern_num':False}})
+        tweetdata.update({'_id' : tweet_id},{'$set': {'event_date':False, 'pattern_num':False, 'event_score':event_score}})
     #else:
      #   tweetdata.update({'_id' : d['_id']},{'$set': {'date_pattern':'null'}})
 

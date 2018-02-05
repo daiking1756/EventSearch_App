@@ -58,6 +58,10 @@
                 text-align: center;
 
             }
+            #button_help{
+                text-align: right;
+                margin: 10px;
+            }
             .twitter-tweet{
                 /*position: fixed;*/
                 margin: 0 auto;
@@ -86,7 +90,7 @@
               animation: load7 1.0s infinite ease-in-out;
             }
             .loader {
-              color: #0F0F0F;
+              color: #FFFFFF;
               font-size: 10px;
               margin: 0px auto;
               position: relative;
@@ -136,74 +140,120 @@
 
 
             /* ######################## ↓ Help Animation用 ↓ ######################## */
-            .message {
-                background:#181818;
-                color:#FFF;
-                position: absolute;
-                top: -250px;
-                left: 0;
-                width: 100%;
-                height: 250px;
-                padding: 20px;
-                transition: top 300ms cubic-bezier(0.17, 0.04, 0.03, 0.94);
-                overflow: hidden;
+            .modal_open{
+                display: inline-block;
+                margin: 3vw;
+                float: left; 
+            }
+             
+            .modal_box {
+                position: fixed;
+                z-index: 7777;
+                display: none;
+                width: 80%;
+                max-width: 840px;
+                margin: 0;
+                padding: 60px 2vw 80px;
+                border: 2px solid #aaa;
+                text-align: center;
+                background: #fff;
                 box-sizing: border-box;
-                  
-                }
-
-                .message h1 {
-                  color:#FFF;
-                }
-
-                #toggle {
-                  position:absolute;
-                  appearance:none;
-                  cursor:pointer;
-                  left:-100%;
-                  top:-100%;
-                }
-
-                #toggle + label {
-                  position:absolute;
-                  cursor:pointer;
-                  padding:10px;
-                  background: #26ae90;
-                width: 100px;
-                border-radius: 10%;
-                padding: 8px 10px;
-                color: #FFF;
-                line-height:20px;
-                font-size:12px;
-                text-align:center;
-                -webkit-font-smoothing: antialiased;
-                cursor: pointer;
-                  margin:20px 50px;
-                  transition:all 500ms ease;
-                }
-                #toggle + label:after {
-                  content:"概要" 
-                }
-
-                .container {
-                transition: margin 300ms cubic-bezier(0.17, 0.04, 0.03, 0.94);
-                  padding:5em 3em;
-                }
-
-                #toggle:checked ~ .message {
-                  top: 0;
-                }
-
-                #toggle:checked ~ .container {
-                  margin-top: 250px;
-                }
-
-                #toggle:checked + label {
-                  background:#dd6149;
-                }
-
-                #toggle:checked + label:after {
-                  content:"Close"
-                }
+            }
+             
+            .modal_close {
+                position: absolute;
+                top: 0;
+                right: 0;
+                display: block;
+                width: 62px;
+                font-size: 46px;
+                color: #000;
+                line-height: 62px;
+                text-align: center;
+                background: #e6e6e6;
+            }
+             
+            .modal_close i {
+                line-height: 62px;
+                vertical-align: bottom;
+            }
+             
+            .modal_bg {
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 6666;
+                display: none;
+                width: 100%;
+                height: 120%;
+                background-color: rgba(0,0,0,0.7);
+            }
+             
+            .link_area {
+                overflow: hidden;
+                max-width: 410px;
+                margin: 60px auto 0;
+                text-align: center;
+            }
+             
+            .link_area .modal_link {
+                display: inline;
+            }
+             
+            .link_area .modal_link a {
+                display: inline-block;
+                width: 180px;
+                color: #000;
+                line-height: 2.5;
+                text-decoration: none;
+                margin: 0 10px;
+                background: #e6e6e6;
+            }
+             
+            .link-area ul li.modal_link:first-child a {
+                float: left;
+            }
+             
+            .link-area ul li.modal_link:last-child a {
+                float: right;
+            }
+             
+             
+            @media screen and (max-width: 769px) {
+             
+            /*  ウィンドウサイズ769px以下の時のスタイル  */
+             
+              .modal_box {
+                  padding: 50px 2vw 40px;
+              }
+             
+              .modal_close {
+                  width: 40px;
+                  line-height: 40px;
+                  font-size: 30px;
+              }
+             
+              .modal_close i {
+                  line-height: 44px;
+              }
+             
+              .link_area {
+                  margin: 25px auto 0;
+              }
+             
+              .link_area .modal_link a {
+                  margin: 15px auto 0;
+              }
+             
+              .link_area ul li.modal_link:first-child a {
+                  float: none;
+                  margin-top: 0;
+              }
+             
+              .link_area ul li.modal_link:last-child a {
+                  float: none;
+              }
+             
             }
             /* ######################## ↑ Help Animation用 ↑ ######################## */
 
@@ -211,7 +261,9 @@
 </head>
 <body>
     <div id="block_left" class="page">
+        
         <h1>PR Tweet Search</h1>
+
         <div class="container">
             <form id="myForm" action="/app.js" method="get" enctype="multipart/form-data">
                 <div class="form-group">
@@ -223,29 +275,65 @@
                     <input type="date" id="since_date" name="since_date" class="form-control input-lg" required> ~
                     <input type="date" id="until_date" name="until_date" class="form-control input-lg" required>
                 </div>
-                <!-- <div class="form-group">
-                    <label>並び替え：</label>
-                    <select id="sort_by" name="sort_by">
-                      <option value="event_date" selected>日付順</option>
-                        <option value="favorite_count">イイね順</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>順序：</label>
-                    <select id="sort_order" name="sort_order">
-                        
-                        <option value="1" selected>昇順</option>
-                        <option value="-1">降順</option>
-                    </select>
-                </div> -->
                 <div class="form-group">
                     <label>キーワード：</label>
                     <input type="text" id="keyword" name="keyword" placeholder="例：ライブ" class="form-control input-lg" ><br>    
+                </div>
+                <div class="form-group">
+                    <label>PRツイートフィルター：</label>
+                    <select id="filter" name="filter" class="form-control input-lg">
+                        <option value="1">無</option>
+                        <option value="2">弱</option>
+                        <option value="3">強</option>
+                    </select>
                 </div>
                 <input type="submit" value="検索" class="btn btn-primary btn-lg btn-block">
             </form>
         </div>
         
+        <div id="button_help">
+        <!-- モーダルウィンドウを呼び出すボタン -->
+            <button type="button" class="btn btn-lg btn-success" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button>
+        </div>
+        <!-- モーダルウィンドウの中身 -->
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">PR Tweet Searchについて</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Twitter上のPR情報を検索!!</h4><br>
+                        <div class="list-group">
+                            <a class="list-group-item">
+                                <h4 class="list-group-item-heading">地名(*必須)</h4>
+                                <p class="list-group-item-text">入力された地名に関連する情報を検索します．<br>例：東京，渋谷，渋谷109</p>
+                            </a>
+                            <a class="list-group-item">
+                                <h4 class="list-group-item-heading">期間(*必須)</h4>
+                                <p class="list-group-item-text">入力された期間内の情報を表示します．<br>その範囲内のPR情報が検索されます．</p>
+                            </a>
+                            <a class="list-group-item">
+                                <h4 class="list-group-item-heading">キーワード</h4>
+                                <p class="list-group-item-text">入力されたキーワードに関連する情報を検索します．<br>例：ライブ，お笑い，プログラミング</p>
+                            </a>
+                            <a class="list-group-item">
+                                <h4 class="list-group-item-heading">PRツイートフィルター</h4>
+                                <p class="list-group-item-text">フィルターを強くするほど，PR情報である可能性の高いツイートしか表示されないようになります．</p>
+                            </a>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">閉じる</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
         <!-- <input type="checkbox" name="toggle" id="toggle">
         <label for="toggle"></label>
         <div class="message">
@@ -277,24 +365,31 @@
                         <input type="radio" autocomplete="off"> 降順
                     </label>
             </div>
+
             <div class="loader">Loading Animation...</div>
 
             <input type="button" class="btn btn-success" value="戻る" onClick="$.scrollify.previous();">
-            
+            <!-- <div id="tweet_num_label"></div> -->
+            <span id="tweet_num_label" class="badge">ツイートHit</span>
         </div>
 
-        <div id="tweet_area">
-            <!-- Embedded Single Tweet -->
-            <!-- Embedded Single Tweet -->
-            <!-- Embedded Single Tweet -->
-            <!-- ..................... -->
-        </div>
+        <!-- Embedded Single Tweet -->
+        <!-- Embedded Single Tweet -->
+        <!-- Embedded Single Tweet -->
+        <!-- ..................... -->
+        <div id="tweet_area"></div>
+        <!-- Embedded Single Tweet -->
+        <!-- Embedded Single Tweet -->
+        <!-- Embedded Single Tweet -->
+        <!-- ..................... -->
     </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    
+
     <script>
         (function (global,factory) {
           "use strict";
@@ -1107,8 +1202,9 @@
           $.scrollify = scrollify;
           return scrollify;
         }));
+    // scroll animation
+    </script>
 
-      </script>
     <script>
         var option = {
             section : '.page', // 対象を指定
@@ -1121,6 +1217,8 @@
             $.scrollify(option); // scrollifyの実行
         });
     </script>
+
+
     <script>
         //################################## ↓ 初期化処理 ↓ ##################################
         var now = new Date();
@@ -1148,8 +1246,6 @@
             return false;
         });
 
-        $("#test").prop("disabled", false);
-
         //################################## ↑ 初期化処理 ↑ ##################################
 
         $(function(){
@@ -1158,8 +1254,10 @@
                 $.scrollify.next(); // 画面のスクロール
                 
                 wsize = window.innerWidth;
-                if(wsize <= 560){
-                    wsize -= 30;
+                if(wsize <= 600){
+                    wsize -= 100;
+                }else{
+                    wsize = 550;
                 }
                 console.log("wsize :" + wsize);
 
@@ -1188,14 +1286,20 @@
                 // data.push($('#sort_by').val());
                 // data.push($('#sort_order').val());
                 data.push($('#keyword').val());
+                data.push($('#filter').val());
                 console.log(data);
 
                 socket.emit('emit_from_client_searchStart', data);
+
+                tweet_num = 0;
+                $('#tweet_num_label').html(tweet_num);
                 console.log('emit_from_client!!!!!!!');
                 
             });
             socket.on('emit_from_server_tweetID', function(data){
                 console.log('emit_from_server!!!!!!!');
+                tweet_num += 1;
+                $('#tweet_num_label').html(tweet_num);
 
                 // ツイートを埋め込み表示するメソッドを実行
                 twttr.widgets.createTweet (
@@ -1205,7 +1309,7 @@
                         conversation: "none" ,
                         theme: "dark",
                         // linkColor: "#D36015" ,
-                        width: 300 ,
+                        width: wsize ,
                         align: "center" ,
                         lang: "ja" ,
                         dnt: true ,
@@ -1215,12 +1319,13 @@
 
             socket.on('emit_from_server_searchEnd', function(data){
                 console.log('ツイートの検索終わったよ');
+                $("#tweet_num_label").append(" ツイートHit")
                 // $("#sort_btn_group").prop("disabled", false); // 並び替えボタンを有効にする
                 $(".loader").toggle();
                 $(".sort_btn").toggle();
                 // $("#menu").toggle();
                 // $(".sort_btn").prop("disabled", false); // 並び替えボタンを有効にする
-                if($("#twitter-widget-0").length){
+                if($("#tweet_area").html().length){
                     console.log("twitter-widget-0があるよ。")
                 }else{
                     socket.emit('emit_from_client_sortButton', null);
@@ -1229,13 +1334,16 @@
             });
 
             socket.on('emit_from_server_sorttweetIDs', function(data){
+                tweet_num = 0;
                 data.forEach(function(doc) {
+                    tweet_num += 1;
                     twttr.widgets.createTweet (
                         doc ,  // 第1引数: ツイートID
                         container , // 第2引数: コンテナの要素
                         {   // 第3引数: パラメータ
+                            cards: "hidden",
                             conversation: "none" ,
-                            theme: "dark",
+                            // theme: "dark",
                             // linkColor: "#D36015" ,
                             width: wsize ,
                             align: "center" ,
@@ -1244,6 +1352,7 @@
                         }
                     );
                 });
+                $('#tweet_num_label').html(tweet_num + " ツイートHit");
             });
         
             $(".sort_btn").click(function(){
