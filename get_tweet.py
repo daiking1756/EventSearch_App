@@ -75,7 +75,7 @@ start = time.time()
 if sys.argv[3] == "none": # keywordに何も入力されていない場合
     search_word = sys.argv[1] + ' イベント' + ' OR ' + sys.argv[1] + ' フェア' + ' OR ' + sys.argv[1] + ' 告知'
     flag_keyword = False
-    d = list(tweetdata.find({'search_word':sys.argv[1]},{'_id':0, 'id_str':1}).sort([['id_str',-1]]).limit(1))
+    d = list(tweetdata.find({'search_word':sys.argv[1], 'keyword':{'$exists':False}},{'_id':0, 'id_str':1}).sort([['id_str',-1]]).limit(1))
 else:
     search_word = sys.argv[1] + ' ' + sys.argv[3]
     flag_keyword = True

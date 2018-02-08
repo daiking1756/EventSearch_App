@@ -10,7 +10,7 @@ const   express = require('express'),
         db_url = 'mongodb://127.0.0.1:27017/eventtweet',
         db = mongojs(db_url),
         tweetdata = db.collection('tweetdata'),
-        request_num = 10;
+        request_num = 5;
 
 const   get_tweet = 'python3.6 ./get_tweet.py';
         
