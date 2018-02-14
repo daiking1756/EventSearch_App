@@ -177,7 +177,20 @@ def main(tweet_id, text, created_at, filter):
             if x['type']=='EVENT':
                 event_score = 2
                 salience += x['salience']
+                # print("############ TYPE: EVENT ############")
+                # print("word :" + str(x['name']))
+                # print('\n')
                 
+            # elif x['type']=='UNKNOWN':
+            #     print("############ TYPE: UNKNOWN ############")
+            #     print("word :" + str(x['name']))
+            #     print('\n')
+
+            # elif x['type']=='WORK_OF_ART':
+            #     print("############ TYPE: WORK_OF_ART ############")
+            #     print("word :" + str(x['name']))
+            #     print('\n')
+
         if salience >= 0.2:
                 # tweetdata.update({'_id' : tweet_id},{'$set': {'event_gcpnl':True}})
                 # flag_gcpnl = True

@@ -282,9 +282,9 @@
                 <div class="form-group">
                     <label>PRツイートフィルター：</label>
                     <select id="filter" name="filter" class="form-control input-lg">
-                        <option value="1">PR情報度：△</option>
-                        <option value="2">PR情報度：○</option>
-                        <option value="3">PR情報度：◎</option>
+                        <option value="1">PR情報度：弱</option>
+                        <option value="2">PR情報度：中</option>
+                        <option value="3">PR情報度：強</option>
                         <!-- <option value="1">低 (絞り込み度△)</option>
                         <option value="2">中 (PRツイートの可能性○)</option>
                         <option value="3">高 (PRツイートの可能性◎)</option> -->
@@ -310,15 +310,15 @@
                         <h4>Twitter上のPR情報を検索!!</h4><br>
                         <div class="list-group">
                             <a class="list-group-item">
-                                <h4 class="list-group-item-heading">地名(*必須)</h4>
+                                <h4 class="list-group-item-heading">地名 (必須)</h4>
                                 <p class="list-group-item-text">入力された地名に関連する情報を検索します<br>例：東京，渋谷，渋谷109</p>
                             </a>
                             <a class="list-group-item">
-                                <h4 class="list-group-item-heading">期間(*必須)</h4>
+                                <h4 class="list-group-item-heading">期間 (必須)</h4>
                                 <p class="list-group-item-text">入力された期間内の情報を表示します<br>その範囲内のPR情報が検索されます</p>
                             </a>
                             <a class="list-group-item">
-                                <h4 class="list-group-item-heading">キーワード</h4>
+                                <h4 class="list-group-item-heading">キーワード (任意)</h4>
                                 <p class="list-group-item-text">入力されたキーワードに関連する情報を検索します<br>例：ライブ，お笑い，プログラミング</p>
                             </a>
                             <a class="list-group-item">
@@ -1309,6 +1309,7 @@
                     data ,  // 第1引数: ツイートID
                     container , // 第2引数: コンテナの要素
                     {   // 第3引数: パラメータ
+                        cards: "hidden",
                         conversation: "none" ,
                         // theme: "dark",
                         // linkColor: "#D36015" ,
@@ -1344,7 +1345,7 @@
                         doc ,  // 第1引数: ツイートID
                         container , // 第2引数: コンテナの要素
                         {   // 第3引数: パラメータ
-                            // cards: "hidden",
+                            cards: "hidden",
                             conversation: "none" ,
                             // theme: "dark",
                             // linkColor: "#D36015" ,

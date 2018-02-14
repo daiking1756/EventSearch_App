@@ -10,7 +10,7 @@ const   express = require('express'),
         db_url = 'mongodb://127.0.0.1:27017/eventtweet',
         db = mongojs(db_url),
         tweetdata = db.collection('tweetdata'),
-        request_num = 5;
+        request_num = 10;
 
 const   get_tweet = 'python3.6 ./get_tweet.py';
         
@@ -44,7 +44,7 @@ function check_mongoDB(data, since_date, until_date, keyword){
             }
             count = docs;
             if(count > prev_count){ // イベントツイートが追加された場合
-                console.log("insert new tweet!");
+                // console.log("insert new tweet!");
                 var diff = count - prev_count;
                 prev_count = count;
                 get_tweetID(diff, data, since_date, until_date, keyword);
@@ -60,7 +60,7 @@ function check_mongoDB(data, since_date, until_date, keyword){
             }
             count = docs;
             if(count > prev_count){ // イベントツイートが追加された場合
-                console.log("insert new tweet!");
+                // console.log("insert new tweet!");
                 var diff = count - prev_count;
                 prev_count = count;
                 get_tweetID(diff, data, since_date, until_date, keyword);
